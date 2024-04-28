@@ -47,19 +47,11 @@ public class ServiceProxyInvoker {
 		URI url = URI.create(request.getRequestURL().toString());
 		String path = url.getPath();
 		if (path==null || !path.matches("^/[a-zA-Z0-9_\\-]+/[a-zA-Z0-9_\\-]+.*$")) {
-			if (errorHandler!=null) {
-				return errorHandler.handle(path);
-			}else {
-				return DEFAULT_ERROR_HANDLER.handle(path);
-			}
+			return errorHandler.handle(path);
 		}
 		InvokeTarget target = serviceProxyFactory.getServiceInvokeTarget(path);
 		if (target==null) {
-			if (errorHandler!=null) {
-				return errorHandler.handle(path);
-			}else {
-				return DEFAULT_ERROR_HANDLER.handle(path);
-			}
+			return errorHandler.handle(path);
 		}
 		
 		Map<String, String[]> requestMapper = request.getParameterMap();
@@ -90,19 +82,11 @@ public class ServiceProxyInvoker {
 		URI url = URI.create(request.getRequestURL().toString());
 		String path = url.getPath();
 		if (path==null || !path.matches("^/[a-zA-Z0-9_\\-]+/[a-zA-Z0-9_\\-]+.*$")) {
-			if (errorHandler!=null) {
 				return errorHandler.handle(path);
-			}else {
-				return DEFAULT_ERROR_HANDLER.handle(path);
-			}
 		}
 		InvokeTarget target = serviceProxyFactory.getServiceInvokeTarget(path);
 		if (target==null) {
-			if (errorHandler!=null) {
-				return errorHandler.handle(path);
-			}else {
-				return DEFAULT_ERROR_HANDLER.handle(path);
-			}
+			return errorHandler.handle(path);
 		}
 
 		Map<String, String[]> requestMapper = request.getParameterMap();
