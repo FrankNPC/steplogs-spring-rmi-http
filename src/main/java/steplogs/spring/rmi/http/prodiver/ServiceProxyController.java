@@ -20,18 +20,6 @@ public class ServiceProxyController {
 
 	private static final ObjectMapper objectMapper = new ObjectMapper();
 	
-	private static final String DEFAULT_ERROR_RESPONSE = "{\"code\": -1, \"message\": \"internal service error: {}\", \"success\": false}";
-
-	private static final ErrorHandler DEFAULT_ERROR_HANDLER = new ErrorHandler() {
-		public String handle(String errorMessage) {
-			return  DEFAULT_ERROR_RESPONSE.replace("{}", errorMessage);
-		}
-		public String handle(Throwable thrownException) {
-			thrownException.printStackTrace();
-			return  DEFAULT_ERROR_RESPONSE;
-		}
-	};
-	
 	@Resource
 	protected ServiceProxyInvoker serviceProxyInvoker;
 
@@ -44,10 +32,9 @@ public class ServiceProxyController {
 			try {
 				return objectMapper.writeValueAsString(serviceProxyInvoker.getErrorHandler().handle(e));
 			} catch (JsonProcessingException e1) {
-				e1.printStackTrace();
+				throw new RuntimeException(e1);
 			}
 		}
-		return DEFAULT_ERROR_HANDLER.handle("GET: "+request.getRequestURI());
 	}
 
 	@PostMapping(value="/*/**", produces= {MediaType.APPLICATION_JSON_VALUE}, consumes= {MediaType.APPLICATION_JSON_VALUE})
@@ -60,10 +47,9 @@ public class ServiceProxyController {
 			try {
 				return objectMapper.writeValueAsString(serviceProxyInvoker.getErrorHandler().handle(e));
 			} catch (JsonProcessingException e1) {
-				e1.printStackTrace();
+				throw new RuntimeException(e1);
 			}
 		}
-		return DEFAULT_ERROR_HANDLER.handle("POST"+request.getRequestURI());
 	}
 	
 }
