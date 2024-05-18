@@ -8,14 +8,17 @@ import java.net.URI;
 import java.net.URLDecoder;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import steplogs.spring.rmi.http.prodiver.ServiceProxyFactory.InvokeTarget;
 
-public class ServiceProxyInvoker {
+@Component
+public class ServiceProviderInvoker {
 
 	private static final ObjectMapper objectMapper = new ObjectMapper();
 	private static final String DEFAULT_ERROR_RESPONSE = "{\"code\": -1, \"message\": \"service doesn't exist: {}\", \"success\": false}";
@@ -31,27 +34,24 @@ public class ServiceProxyInvoker {
 	};
 	
 	@Resource
-	protected ServiceProxyFactory serviceProxyFactory;
-	
+	protected ServiceProviderConfiguration serviceProviderConfiguration;
+
+	@Autowired(required = false)
 	private ErrorHandler errorHandler;
 	
-	public ServiceProxyInvoker(ErrorHandler errorHandler) {
-		this.errorHandler = errorHandler!=null?errorHandler:DEFAULT_ERROR_HANDLER;
-	}
-	
 	public ErrorHandler getErrorHandler() {
-		return errorHandler;
+		return errorHandler = errorHandler!=null?errorHandler:DEFAULT_ERROR_HANDLER;
 	}
 	
 	public Object get(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		URI url = URI.create(request.getRequestURL().toString());
 		String path = url.getPath();
 		if (path==null || !path.matches("^/[a-zA-Z0-9_\\-]+/[a-zA-Z0-9_\\-]+.*$")) {
-			return errorHandler.handle(path);
+			return getErrorHandler().handle(path);
 		}
-		InvokeTarget target = serviceProxyFactory.getServiceInvokeTarget(path);
+		InvokeTarget target = serviceProviderConfiguration.getServiceInvokeTarget(path);
 		if (target==null) {
-			return errorHandler.handle(path);
+			return getErrorHandler().handle(path);
 		}
 		
 		Map<String, String[]> requestMapper = request.getParameterMap();
@@ -82,11 +82,11 @@ public class ServiceProxyInvoker {
 		URI url = URI.create(request.getRequestURL().toString());
 		String path = url.getPath();
 		if (path==null || !path.matches("^/[a-zA-Z0-9_\\-]+/[a-zA-Z0-9_\\-]+.*$")) {
-				return errorHandler.handle(path);
+			return getErrorHandler().handle(path);
 		}
-		InvokeTarget target = serviceProxyFactory.getServiceInvokeTarget(path);
+		InvokeTarget target = serviceProviderConfiguration.getServiceInvokeTarget(path);
 		if (target==null) {
-			return errorHandler.handle(path);
+			return getErrorHandler().handle(path);
 		}
 
 		Map<String, String[]> requestMapper = request.getParameterMap();

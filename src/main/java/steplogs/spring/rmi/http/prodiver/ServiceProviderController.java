@@ -16,21 +16,21 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
-public class ServiceProxyController {
+public class ServiceProviderController {
 
 	private static final ObjectMapper objectMapper = new ObjectMapper();
 	
 	@Resource
-	protected ServiceProxyInvoker serviceProxyInvoker;
+	protected ServiceProviderInvoker serviceProviderInvoker;
 
 	@GetMapping(value="/*/**", produces= {MediaType.APPLICATION_JSON_VALUE})
 	public String get(HttpServletRequest request, HttpServletResponse response) {
 		try {
-			Object ret = serviceProxyInvoker.get(request, response);
+			Object ret = serviceProviderInvoker.get(request, response);
 			return objectMapper.writeValueAsString(ret);
 		} catch (Exception e) {
 			try {
-				return objectMapper.writeValueAsString(serviceProxyInvoker.getErrorHandler().handle(e));
+				return objectMapper.writeValueAsString(serviceProviderInvoker.getErrorHandler().handle(e));
 			} catch (JsonProcessingException e1) {
 				throw new RuntimeException(e1);
 			}
@@ -41,11 +41,11 @@ public class ServiceProxyController {
 	public String  post(HttpServletRequest request, HttpServletResponse response,
 						@RequestBody Map<String, Object> formBody) {
 		try {
-			Object ret = serviceProxyInvoker.post(request, response, formBody);
+			Object ret = serviceProviderInvoker.post(request, response, formBody);
 			return objectMapper.writeValueAsString(ret);
 		} catch (Exception e) {
 			try {
-				return objectMapper.writeValueAsString(serviceProxyInvoker.getErrorHandler().handle(e));
+				return objectMapper.writeValueAsString(serviceProviderInvoker.getErrorHandler().handle(e));
 			} catch (JsonProcessingException e1) {
 				throw new RuntimeException(e1);
 			}

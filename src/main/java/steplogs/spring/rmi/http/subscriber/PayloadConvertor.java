@@ -25,7 +25,7 @@ class PayloadConvertor {
 	protected FormKeys parseForm(Method method) {
 		FormKeys form = pathMap.get(method);
 		if (form==null) {
-			synchronized(ServiceProxyMethodInterceptor.class){
+			synchronized(this){
 				form = pathMap.get(method);
 				if (form==null) {
 					Map<Method, FormKeys> prePathMap = new HashMap<>(pathMap);

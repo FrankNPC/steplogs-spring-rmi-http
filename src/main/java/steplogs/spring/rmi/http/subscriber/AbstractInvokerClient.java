@@ -8,52 +8,32 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.client.RestClient.ResponseSpec.ErrorHandler;
 
 public abstract class AbstractInvokerClient<T> {
 
-	protected final RestClient restClient;
-	protected final ErrorHandler errorHandler;
-	protected final T errorResponse;
-	protected final HttpHeaderTransporter httpHeaderTransporter;
+	protected final ServiceTemplate<T> serviceTemplate;
 	
-	/**
-	 * 
-	 * @param restClient				RestClient instance
-	 * @param httpHeaderTransporter		Copy, add or transport headers such as Authorization
-	 * @param errorHandler				Error handler
-	 * @param errorResponse				Return the default object if there is an error
-	 */
-	public AbstractInvokerClient(RestClient restClient, HttpHeaderTransporter httpHeaderTransporter, ErrorHandler errorHandler, T errorResponse) {
-		this.restClient = restClient;
-		this.errorHandler = errorHandler;
-		this.httpHeaderTransporter = httpHeaderTransporter;
-		this.errorResponse = errorResponse;
+	public AbstractInvokerClient(ServiceTemplate<T> serviceTemplate) {
+		this.serviceTemplate = serviceTemplate;
 	}
 
-	/**
-	 * 
-	 * @param host						Host
-	 * @param httpHeaderTransporter		Copy, add or transport headers such as Authorization
-	 * @param errorHandler				Error handler
-	 * @param errorResponse				Return the default object if there is an error
-	 */
-	public AbstractInvokerClient(String host, HttpHeaderTransporter httpHeaderTransporter, ErrorHandler errorHandler, T errorResponse) {
-		this(
-				RestClient
-					.builder().requestFactory(new HttpComponentsClientHttpRequestFactory())
-					.baseUrl(host)
-	//				.messageConverters(null)
-					.build(), 
-				httpHeaderTransporter, errorHandler, errorResponse);
-	}
-	
 	/**
 	 * @param path				path
 	 * @param queryVariables	Query variables on the URL
 	 * @param typeRef			Type convert to
 	 */
 	protected T get(String path, Map<String, Object> queryVariables, ParameterizedTypeReference<T> typeRef) {
+		RestClient restClient;
+		if (serviceTemplate.getRestClient()!=null) {
+			restClient = serviceTemplate.getRestClient();
+		}else {
+			restClient = RestClient
+				.builder().requestFactory(new HttpComponentsClientHttpRequestFactory())
+				.baseUrl(serviceTemplate.getBaseUrl())
+//				.messageConverters(null)
+				.build();
+		}
+		
 		return restClient
 				.get()
 				.uri(builder -> {
@@ -75,8 +55,8 @@ public abstract class AbstractInvokerClient<T> {
 					return builder.build();
 				})
 				.headers(headers -> {
-					if (httpHeaderTransporter!=null) {
-						Map<String, String> httpHeaders = httpHeaderTransporter.getHttpHeaders();
+					if (serviceTemplate.getHttpHeaderTransporter()!=null) {
+						Map<String, String> httpHeaders = serviceTemplate.getHttpHeaderTransporter().getHttpHeaders();
 						if (httpHeaders!=null) {
 							for(Map.Entry<String, String> entry : httpHeaders.entrySet()) {
 								headers.addIfAbsent(entry.getKey(), entry.getValue());
@@ -87,15 +67,15 @@ public abstract class AbstractInvokerClient<T> {
 				.accept(MediaType.APPLICATION_JSON)
 				.exchange((request, response) -> {
 					if (response.getStatusCode().isError()) {
-						if (errorHandler!=null) {
-							errorHandler.handle(request, response);
+						if (serviceTemplate.getErrorHandler()!=null) {
+							serviceTemplate.getErrorHandler().handle(request, response);
 						}
-						return errorResponse;
+						return serviceTemplate.getDefaultErrorResponse();
 					} else {
 						try {
 							return response.bodyTo(typeRef);
 						}catch(Exception e) {
-							return errorResponse;
+							return serviceTemplate.getDefaultErrorResponse();
 						}
 					}
 				});
@@ -109,6 +89,17 @@ public abstract class AbstractInvokerClient<T> {
 	 * @param typeRef			Type convert to
 	 */
 	protected T post(String path, Map<String, Object> queryVariables, Map<String, Object> formData, ParameterizedTypeReference<T> typeRef) {
+		RestClient restClient;
+		if (serviceTemplate.getRestClient()!=null) {
+			restClient = serviceTemplate.getRestClient();
+		}else {
+			restClient = RestClient
+				.builder().requestFactory(new HttpComponentsClientHttpRequestFactory())
+				.baseUrl(serviceTemplate.getBaseUrl())
+//				.messageConverters(null)
+				.build();
+		}
+		
 		return restClient
 				.post()
 				.uri(builder -> {
@@ -130,8 +121,8 @@ public abstract class AbstractInvokerClient<T> {
 					return builder.build();
 				})
 				.headers(headers -> {
-					if (httpHeaderTransporter!=null) {
-						Map<String, String> httpHeaders = httpHeaderTransporter.getHttpHeaders();
+					if (serviceTemplate.getHttpHeaderTransporter()!=null) {
+						Map<String, String> httpHeaders = serviceTemplate.getHttpHeaderTransporter().getHttpHeaders();
 						if (httpHeaders!=null) {
 							for(Map.Entry<String, String> entry : httpHeaders.entrySet()) {
 								headers.addIfAbsent(entry.getKey(), entry.getValue());
@@ -144,15 +135,15 @@ public abstract class AbstractInvokerClient<T> {
 				.body(formData)
 				.exchange((request, response) -> {
 					if (response.getStatusCode().isError()) {
-						if (errorHandler!=null) {
-							errorHandler.handle(request, response);
+						if (serviceTemplate.getErrorHandler()!=null) {
+							serviceTemplate.getErrorHandler().handle(request, response);
 						}
-						return errorResponse;
+						return serviceTemplate.getDefaultErrorResponse();
 					} else {
 						try {
 							return response.bodyTo(typeRef);
 						}catch(Exception e) {
-							return errorResponse;
+							return serviceTemplate.getDefaultErrorResponse();
 						}
 					}
 				});

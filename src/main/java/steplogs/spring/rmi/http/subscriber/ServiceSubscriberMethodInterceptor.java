@@ -9,21 +9,15 @@ import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.cglib.proxy.Callback;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.web.client.RestClient;
-import org.springframework.web.client.RestClient.ResponseSpec.ErrorHandler;
 
 import steplogs.spring.rmi.http.subscriber.PayloadConvertor.FormKeys;
 
-public class ServiceProxyMethodInterceptor<T> extends AbstractInvokerClient<T> implements MethodInterceptor, Callback {
+public class ServiceSubscriberMethodInterceptor<T> extends AbstractInvokerClient<T> implements MethodInterceptor, Callback {
 	
 	private PayloadConvertor payloadConvertor = new PayloadConvertor();
-
-	public ServiceProxyMethodInterceptor(RestClient restClient, HttpHeaderTransporter httpHeaderTransporter, ErrorHandler errorHandler, T errorResponse) {
-		super(restClient, httpHeaderTransporter, errorHandler, errorResponse);
-	}
 	
-	public ServiceProxyMethodInterceptor(String host, HttpHeaderTransporter httpHeaderTransporter, ErrorHandler errorHandler, T errorResponse) {
-		super(host, httpHeaderTransporter, errorHandler, errorResponse);
+	public ServiceSubscriberMethodInterceptor(ServiceTemplate<T> serviceTemplate) {
+		super(serviceTemplate);
 	}
 	
 	@Override
