@@ -10,11 +10,11 @@ import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.cglib.proxy.Callback;
 import org.springframework.core.ParameterizedTypeReference;
 
-import steplogs.spring.rmi.http.subscriber.PayloadConvertor.FormKeys;
+import steplogs.spring.rmi.http.subscriber.BeanParser.FormKeys;
 
 public class ServiceSubscriberMethodInterceptor<T> extends AbstractInvokerClient<T> implements MethodInterceptor, Callback {
 	
-	private PayloadConvertor payloadConvertor = new PayloadConvertor();
+	private BeanParser beanParser = new BeanParser();
 	
 	public ServiceSubscriberMethodInterceptor(ServiceTemplate<T> serviceTemplate) {
 		super(serviceTemplate);
@@ -23,7 +23,7 @@ public class ServiceSubscriberMethodInterceptor<T> extends AbstractInvokerClient
 	@Override
 	public T invoke(MethodInvocation invocation) throws Throwable {
 		Method method = invocation.getMethod();
-		FormKeys form = payloadConvertor.parseForm(method);
+		FormKeys form = beanParser.parseForm(method);
 
 		Map<String, Object> queryVariables = new HashMap<>();
 		Map<String, Object> formData = new HashMap<>();

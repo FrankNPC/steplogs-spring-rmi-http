@@ -7,7 +7,7 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 
-class PayloadConvertor {
+class BeanParser {
 
 	protected class FormKeys {
 		protected String path;
@@ -69,15 +69,7 @@ class PayloadConvertor {
 
 	private static final boolean isWrapperOrStringType(Class<?> clazz) {
 		return clazz.isPrimitive()
-				|| clazz.equals(String.class) 
-				|| clazz.equals(Boolean.class) 
-				|| clazz.equals(Integer.class) 
-				|| clazz.equals(Character.class)
-				|| clazz.equals(Byte.class) 
-				|| clazz.equals(Short.class) 
-				|| clazz.equals(Double.class)
-				|| clazz.equals(Long.class) 
-				|| clazz.equals(Float.class);
+				|| clazz.equals(String.class);
 	}
 	
 }
