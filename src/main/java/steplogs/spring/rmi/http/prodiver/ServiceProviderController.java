@@ -32,13 +32,13 @@ public class ServiceProviderController {
 			try {
 				return objectMapper.writeValueAsString(serviceProviderInvoker.getErrorHandler().handle(e));
 			} catch (JsonProcessingException e1) {
-				throw new RuntimeException(e1);
+				return ServiceProviderInvoker.INTERNAL_SERVICE_ERROR;
 			}
 		}
 	}
 
 	@PostMapping(value="/*/**", produces= {MediaType.APPLICATION_JSON_VALUE}, consumes= {MediaType.APPLICATION_JSON_VALUE})
-	public String  post(HttpServletRequest request, HttpServletResponse response,
+	public String post(HttpServletRequest request, HttpServletResponse response,
 						@RequestBody Map<String, Object> formBody) {
 		try {
 			Object ret = serviceProviderInvoker.post(request, response, formBody);
@@ -47,7 +47,7 @@ public class ServiceProviderController {
 			try {
 				return objectMapper.writeValueAsString(serviceProviderInvoker.getErrorHandler().handle(e));
 			} catch (JsonProcessingException e1) {
-				throw new RuntimeException(e1);
+				return ServiceProviderInvoker.INTERNAL_SERVICE_ERROR;
 			}
 		}
 	}

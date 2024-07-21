@@ -21,15 +21,13 @@ import jakarta.servlet.http.HttpServletResponse;
 public class ServiceProviderInvoker {
 
 	private static final ObjectMapper objectMapper = new ObjectMapper();
-	private static final String DEFAULT_ERROR_RESPONSE = "{\"code\": -1, \"message\": \"service doesn't exist: {}\", \"success\": false}";
+	private static final String DEFAULT_ERROR_RESPONSE = "{\"code\": -1, \"message\": \"service doesn't exist\", \"success\": false}";
+	public static final String INTERNAL_SERVICE_ERROR = "{\"code\": -1, \"message\": \"Internal Servie Error\", \"success\": false}";
 
 	private static final ErrorHandler DEFAULT_ERROR_HANDLER = new ErrorHandler() {
-		public String handle(String errorMessage) {
-			return  DEFAULT_ERROR_RESPONSE.replace("{}", errorMessage);
-		}
 		public String handle(Throwable thrownException) {
 			thrownException.printStackTrace();
-			return  DEFAULT_ERROR_RESPONSE;
+			return  INTERNAL_SERVICE_ERROR;
 		}
 	};
 	
@@ -47,11 +45,11 @@ public class ServiceProviderInvoker {
 		URI url = URI.create(request.getRequestURL().toString());
 		String path = url.getPath();
 		if (path==null || !path.matches("^/[a-zA-Z0-9_\\-]+/[a-zA-Z0-9_\\-]+.*$")) {
-			return getErrorHandler().handle(path);
+			return DEFAULT_ERROR_RESPONSE;
 		}
 		InvokeTarget target = serviceProviderConfiguration.getServiceInvokeTarget(path);
 		if (target==null) {
-			return getErrorHandler().handle(path);
+			return DEFAULT_ERROR_RESPONSE;
 		}
 		
 		Map<String, String[]> requestMapper = request.getParameterMap();
@@ -63,11 +61,11 @@ public class ServiceProviderInvoker {
 			if (values!=null) {
 				Class<?> clazz = params[i].getType();
 				if (values.length==1) {
-					requestParams[i] = convert(values[0], clazz);
+					requestParams[i] = parseValue(clazz, values[0]);
 				}else {
 					Object[] objects = new Object[values.length];
 					for(int k=0; k<values.length; k++) {
-						objects[k] = convert(values[k], clazz);
+						objects[k] = parseValue(clazz, values[k]);
 					}
 					requestParams[i] = objects;
 				}
@@ -82,11 +80,11 @@ public class ServiceProviderInvoker {
 		URI url = URI.create(request.getRequestURL().toString());
 		String path = url.getPath();
 		if (path==null || !path.matches("^/[a-zA-Z0-9_\\-]+/[a-zA-Z0-9_\\-]+.*$")) {
-			return getErrorHandler().handle(path);
+			return DEFAULT_ERROR_RESPONSE;
 		}
 		InvokeTarget target = serviceProviderConfiguration.getServiceInvokeTarget(path);
 		if (target==null) {
-			return getErrorHandler().handle(path);
+			return DEFAULT_ERROR_RESPONSE;
 		}
 
 		Map<String, String[]> requestMapper = request.getParameterMap();
@@ -98,24 +96,24 @@ public class ServiceProviderInvoker {
 			Class<?> clazz = params[i].getType();
 			if (values!=null) {
 				if (values.length==1) {
-					requestParams[i] = convert(values[0], clazz);
+					requestParams[i] = parseValue(clazz, values[0]);
 				}else {
 					Object[] objects = new Object[values.length];
 					for(int k=0; k<values.length; k++) {
-						objects[k] = convert(values[k], clazz);
+						objects[k] = parseValue(clazz, values[k]);
 					}
 					requestParams[i] = objects;
 				}
 			}else {
 				Object obj = formBody.get(params[i].getName());
-				requestParams[i] = convert(obj, clazz);
+				requestParams[i] = parseValue(clazz, obj);
 			}
 		}
 		
 		return target.getMethod().invoke(target.getBean(), requestParams);
 	}
-	
-	private Object convert(Object value, Class<?> clazz) throws NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+
+	public static final Object parseValue(Class<?> clazz, Object value) throws NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		if (value==null) {
 			return null;
 		}
@@ -125,11 +123,42 @@ public class ServiceProviderInvoker {
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
-		}else if (!clazz.isPrimitive()) {
+		}else if (Void.class.equals(clazz)) {
+			return null;
+		}else if (clazz.isPrimitive()) {
+			String typeName = clazz.getTypeName();
+			String strValue = value.toString();
+			if ("boolean".equals(typeName)) {
+				return strValue.isEmpty() ? false : Boolean.parseBoolean(strValue);
+			}
+			if ("byte".equals(typeName)) {
+				return strValue.isEmpty() ? 0 : Byte.parseByte(strValue);
+			}
+			if ("char".equals(typeName)) {
+				return strValue.isEmpty() ? 0 : strValue.charAt(0);
+			}
+			if ("short".equals(typeName)) {
+				return strValue.isEmpty() ? 0 : Short.parseShort(strValue);
+			}
+			if ("int".equals(typeName)) {
+				return strValue.isEmpty() ? 0 : Integer.parseInt(strValue);
+			}
+			if ("long".equals(typeName)) {
+				return strValue.isEmpty() ? 0 : Long.parseLong(strValue);
+			}
+			if ("float".equals(typeName)) {
+				return strValue.isEmpty() ? 0 : Float.parseFloat(strValue);
+			}
+			if ("double".equals(typeName)) {
+				return strValue.isEmpty() ? 0 : Double.parseDouble(strValue);
+			}
+		} else {
 			return objectMapper.convertValue(value, clazz);
 		}
+		
 		Constructor<?> constructor = clazz.getConstructor(String.class);
 		Object instance = constructor.newInstance(value);
 		return instance;
 	}
+	
 }
