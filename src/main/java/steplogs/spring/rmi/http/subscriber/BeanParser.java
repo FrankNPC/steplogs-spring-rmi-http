@@ -1,0 +1,76 @@
+package steplogs.spring.rmi.http.subscriber;
+
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.HashMap;
+import java.util.Map;
+
+import steplogs.spring.rmi.http.BeanHelper;
+
+class BeanParser {
+
+	protected class FormKeys {
+		protected String path;
+		protected String[] primativeKeys;
+		protected String[] formKeys;
+		public FormKeys(String p, String[] pks, String[] fks){
+			path = p;
+			primativeKeys = pks;
+			formKeys = fks;
+		}
+	}
+	
+	protected Map<Method, FormKeys> pathMap = new HashMap<>();
+	
+	protected FormKeys parseForm(Method method) {
+		FormKeys form = pathMap.get(method);
+		if (form==null) {
+			synchronized(this){
+				form = pathMap.get(method);
+				if (form==null) {
+					Map<Method, FormKeys> prePathMap = new HashMap<>(pathMap);
+					String serviceName = method.getDeclaringClass().getName();
+					serviceName = serviceName.substring(serviceName.lastIndexOf(".")+1);
+					
+//					String methodName = method.getName();
+//					methodName = PropertyNamingStrategies.SnakeCaseStrategy.INSTANCE.translate(methodName);
+//
+//					serviceName = PropertyNamingStrategies.SnakeCaseStrategy.INSTANCE.translate(serviceName);
+//					serviceName = serviceName.replace("_impl", "");
+//					serviceName = serviceName.replace("_service", "");
+
+					String path = BeanHelper.parseMethodName(serviceName, method.getName());
+					
+					if (!path.matches("^/[a-zA-Z0-9_\\\\-]+/[a-zA-Z0-9_\\\\-]+.*$")) {
+						throw new RuntimeException("Invalid service name. It should be [/_0-9a-z\\-].");
+					}
+
+					Parameter[] params = method.getParameters();
+					String[] primativeKeys = new String[params.length];
+					String[] formKeys = new String[params.length];
+					
+					for(int i=0; i<params.length; i++) {
+						String key = params[i].getName();
+//						key = PropertyNamingStrategies.SnakeCaseStrategy.INSTANCE.translate(key);
+						if (isWrapperOrStringType(params[i].getType())) {
+							primativeKeys[i] = key;
+						}else {
+							formKeys[i] = key;
+						}
+					}
+					form = new FormKeys(path, primativeKeys, formKeys);
+					
+					prePathMap.put(method, form);
+					pathMap = prePathMap;
+				}
+			}
+		}
+		return form;
+	}
+
+	private static final boolean isWrapperOrStringType(Class<?> clazz) {
+		return clazz.isPrimitive()
+				|| clazz.equals(String.class);
+	}
+	
+}
