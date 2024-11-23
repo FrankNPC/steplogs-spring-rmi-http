@@ -91,17 +91,15 @@ public abstract class AbstractInvokerClient<T> {
 	}
 	
 	static RestClient getRestClient(ServiceTemplate<?> serviceTemplate) {
-		RestClient restClient;
 		if (serviceTemplate.getRestClient()!=null) {
-			restClient = serviceTemplate.getRestClient();
+			return serviceTemplate.getRestClient();
 		}else {
-			restClient = RestClient
+			return RestClient
 				.builder().requestFactory(new HttpComponentsClientHttpRequestFactory())
 				.baseUrl(serviceTemplate.getBaseUrl())
 //				.messageConverters(null)
 				.build();
 		}
-		return restClient;
 	}
 	
 	static <T> T exchange(ServiceTemplate<T> serviceTemplate, 

@@ -17,6 +17,7 @@ public class BeanHelper {
 		serviceName = PropertyNamingStrategies.SnakeCaseStrategy.INSTANCE.translate(serviceName);
 		serviceName = serviceName.replace("_service_impl", "");
 		serviceName = serviceName.replace("_impl", "");
+		serviceName = serviceName.replace("_service", "");
 		return serviceName;
 	}
 

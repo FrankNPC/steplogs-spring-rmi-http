@@ -29,9 +29,10 @@ class BeanParser {
 				form = pathMap.get(method);
 				if (form==null) {
 					Map<Method, FormKeys> prePathMap = new HashMap<>(pathMap);
-					String serviceName = method.getDeclaringClass().getName();
+					String serviceName = method.getDeclaringClass().getSimpleName();
 					serviceName = serviceName.substring(serviceName.lastIndexOf(".")+1);
-					
+					serviceName = BeanHelper.parseServiceName(serviceName);
+
 //					String methodName = method.getName();
 //					methodName = PropertyNamingStrategies.SnakeCaseStrategy.INSTANCE.translate(methodName);
 //
