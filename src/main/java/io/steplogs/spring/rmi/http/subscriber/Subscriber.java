@@ -1,4 +1,4 @@
-package steplogs.spring.rmi.http.subscriber;
+package io.steplogs.spring.rmi.http.subscriber;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

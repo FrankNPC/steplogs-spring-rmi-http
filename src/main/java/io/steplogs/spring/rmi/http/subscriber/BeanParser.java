@@ -1,11 +1,11 @@
-package steplogs.spring.rmi.http.subscriber;
+package io.steplogs.spring.rmi.http.subscriber;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.HashMap;
 import java.util.Map;
 
-import steplogs.spring.rmi.http.BeanHelper;
+import io.steplogs.spring.rmi.http.BeanHelper;
 
 class BeanParser {
 

@@ -1,4 +1,4 @@
-package steplogs.spring.rmi.http.prodiver;
+package io.steplogs.spring.rmi.http.prodiver;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.util.ClassUtils;
 
-import steplogs.spring.rmi.http.BeanHelper;
+import io.steplogs.spring.rmi.http.BeanHelper;
 
 @Import({ServiceProviderController.class, ServiceProviderInvoker.class})
 public class ServiceProviderConfiguration implements ApplicationListener<ContextRefreshedEvent> {

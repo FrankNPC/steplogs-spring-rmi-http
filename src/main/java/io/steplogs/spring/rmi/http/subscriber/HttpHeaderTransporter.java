@@ -1,4 +1,4 @@
-package steplogs.spring.rmi.http.subscriber;
+package io.steplogs.spring.rmi.http.subscriber;
 
 import java.util.Map;
 

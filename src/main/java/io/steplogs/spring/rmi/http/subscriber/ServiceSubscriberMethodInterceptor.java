@@ -1,4 +1,4 @@
-package steplogs.spring.rmi.http.subscriber;
+package io.steplogs.spring.rmi.http.subscriber;
 
 
 import java.lang.reflect.Method;
@@ -10,7 +10,7 @@ import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.cglib.proxy.Callback;
 import org.springframework.core.ParameterizedTypeReference;
 
-import steplogs.spring.rmi.http.subscriber.BeanParser.FormKeys;
+import io.steplogs.spring.rmi.http.subscriber.BeanParser.FormKeys;
 
 public class ServiceSubscriberMethodInterceptor<T> extends AbstractInvokerClient<T> implements MethodInterceptor, Callback {
 	

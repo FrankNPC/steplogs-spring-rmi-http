@@ -1,4 +1,4 @@
-package steplogs.spring.rmi.http;
+package io.steplogs.spring.rmi.http;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -7,7 +7,7 @@ import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import steplogs.spring.rmi.http.prodiver.Provider;
+import io.steplogs.spring.rmi.http.prodiver.Provider;
 
 @Provider
 public class BeanHelperTester {

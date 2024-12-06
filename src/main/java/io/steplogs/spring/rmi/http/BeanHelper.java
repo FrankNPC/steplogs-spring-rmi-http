@@ -1,4 +1,4 @@
-package steplogs.spring.rmi.http;
+package io.steplogs.spring.rmi.http;
 
 import java.lang.annotation.Annotation;
 import java.util.Set;

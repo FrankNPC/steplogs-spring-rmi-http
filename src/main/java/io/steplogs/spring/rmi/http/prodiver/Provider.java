@@ -1,4 +1,4 @@
-package steplogs.spring.rmi.http.prodiver;
+package io.steplogs.spring.rmi.http.prodiver;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
