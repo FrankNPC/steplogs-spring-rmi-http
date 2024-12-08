@@ -1,5 +1,6 @@
 package io.steplogs.spring.rmi.http.subscriber;
 
+import java.util.Enumeration;
 import java.util.List;
 
 import org.springframework.lang.Nullable;
@@ -24,9 +25,11 @@ public class HeaderCopyHandlerInterceptor implements HandlerInterceptor {
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 		defaultHttpHeaderTransporter.removeHttpHeaders();
 		for(String header : headersForCopy) {
-			String value = request.getHeader(header);
-			if (value!=null) {
-				defaultHttpHeaderTransporter.addHttpHeader(header, value);
+			Enumeration<String> headers = request.getHeaders(header);
+			if (headers!=null) {
+				while(headers.hasMoreElements()) {
+					defaultHttpHeaderTransporter.addHttpHeader(header, headers.nextElement());
+				}
 			}
 		}
 		return true;

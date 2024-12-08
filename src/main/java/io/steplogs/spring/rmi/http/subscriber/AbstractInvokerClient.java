@@ -3,6 +3,7 @@ package io.steplogs.spring.rmi.http.subscriber;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.core.ParameterizedTypeReference;
@@ -80,10 +81,14 @@ public abstract class AbstractInvokerClient<T> {
 	
 	static HttpHeaders addHeaders(ServiceTemplate<?> serviceTemplate, HttpHeaders headers) {
 		if (serviceTemplate.getHttpHeaderTransporter()!=null) {
-			Map<String, String> httpHeaders = serviceTemplate.getHttpHeaderTransporter().getHttpHeaders();
+			Map<String, List<String>> httpHeaders = serviceTemplate.getHttpHeaderTransporter().getHttpHeaders();
 			if (httpHeaders!=null) {
-				for(Map.Entry<String, String> entry : httpHeaders.entrySet()) {
-					headers.addIfAbsent(entry.getKey(), entry.getValue());
+				for(Map.Entry<String, List<String>> entry : httpHeaders.entrySet()) {
+					if (entry.getValue().size()==1) {
+						headers.addIfAbsent(entry.getKey(), entry.getValue().get(0));
+					} else {
+						headers.addAll(entry.getKey(), entry.getValue());
+					}
 				}
 			}
 		}
