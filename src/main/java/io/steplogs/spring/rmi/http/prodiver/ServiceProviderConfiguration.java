@@ -40,16 +40,19 @@ public class ServiceProviderConfiguration implements ApplicationListener<Context
 					Map<String, ?> map = applicationContext.getBeansOfType(Object.class);
 					for (Map.Entry<String, ?> entry : map.entrySet()) {
 						String serviceName = BeanHelper.parseServiceName(entry.getKey());
-						Method[] methods = ClassUtils.getUserClass(entry.getValue()).getDeclaredMethods();
 						boolean isProviderPresent = BeanHelper.detectAnnotationByName(
 								ClassUtils.getUserClass(entry.getValue()).getAnnotations(), annotationNames);
-						for (Method method : methods) {
-							if (!Modifier.isStatic(method.getModifiers()) && !Modifier.isFinal(method.getModifiers())
-									&& Modifier.isPublic(method.getModifiers())
-									&& (isProviderPresent || BeanHelper.detectAnnotationByName(method.getAnnotations(), annotationNames))
-									) {
-								String path = BeanHelper.parseMethodName(serviceName, method.getName());
-								prepBeans.put(path, new InvokeTarget(entry.getValue(), method));
+						Class<?>[] interfaces = ClassUtils.getUserClass(entry.getValue().getClass()).getInterfaces();
+						for (Class<?> iface : interfaces) {
+							Method[] methods = iface.getDeclaredMethods();
+							for (Method method : methods) {
+								if (!Modifier.isStatic(method.getModifiers()) && !Modifier.isFinal(method.getModifiers())
+										&& Modifier.isPublic(method.getModifiers())
+										&& (isProviderPresent || BeanHelper.detectAnnotationByName(method.getAnnotations(), annotationNames))
+										) {
+									String path = BeanHelper.parseMethodName(serviceName, method.getName());
+									prepBeans.put(path, new InvokeTarget(entry.getValue(), method));
+								}
 							}
 						}
 					}

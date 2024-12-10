@@ -48,15 +48,14 @@ public class ServiceProviderInvoker {
 		if (path==null || !path.matches("^/[a-zA-Z0-9_\\-]+/[a-zA-Z0-9_\\-]+.*$")) {
 			return DEFAULT_ERROR_RESPONSE;
 		}
-		InvokeTarget target = serviceProviderConfiguration.getServiceInvokeTarget(path);
-		if (target==null) {
+		InvokeTarget invokeTarget = serviceProviderConfiguration.getServiceInvokeTarget(path);
+		if (invokeTarget==null) {
 			return DEFAULT_ERROR_RESPONSE;
 		}
 		
 		Map<String, String[]> requestMapper = request.getParameterMap();
-		Parameter[] params = target.getMethod().getParameters();
-		Object[] requestParams = parseParameters(requestMapper, params, null);
-		return target.getMethod().invoke(target.getBean(), requestParams);
+		Object[] requestParams = parseParameters(requestMapper, invokeTarget, null);
+		return invokeTarget.getMethod().invoke(invokeTarget.getBean(), requestParams);
 	}
 	
 	public Object post(HttpServletRequest request, HttpServletResponse response,
@@ -66,18 +65,18 @@ public class ServiceProviderInvoker {
 		if (path==null || !path.matches("^/[a-zA-Z0-9_\\-]+/[a-zA-Z0-9_\\-]+.*$")) {
 			return DEFAULT_ERROR_RESPONSE;
 		}
-		InvokeTarget target = serviceProviderConfiguration.getServiceInvokeTarget(path);
-		if (target==null) {
+		InvokeTarget invokeTarget = serviceProviderConfiguration.getServiceInvokeTarget(path);
+		if (invokeTarget==null) {
 			return DEFAULT_ERROR_RESPONSE;
 		}
 
 		Map<String, String[]> requestMapper = request.getParameterMap();
-		Parameter[] params = target.getMethod().getParameters();
-		Object[] requestParams = parseParameters(requestMapper, params, formBody);
-		return target.getMethod().invoke(target.getBean(), requestParams);
+		Object[] requestParams = parseParameters(requestMapper, invokeTarget, formBody);
+		return invokeTarget.getMethod().invoke(invokeTarget.getBean(), requestParams);
 	}
 	
-	static Object[] parseParameters(Map<String, String[]> requestMapper, Parameter[] params, Map<String, Object> formBody) throws Exception {
+	static Object[] parseParameters(Map<String, String[]> requestMapper, InvokeTarget invokeTarget, Map<String, Object> formBody) throws Exception {
+		Parameter[] params = invokeTarget.getMethod().getParameters();
 		Object[] requestParams = new Object[params.length];
 		for(int i=0; i<requestParams.length; i++) {
 			String[] values = requestMapper.get(params[i].getName());
