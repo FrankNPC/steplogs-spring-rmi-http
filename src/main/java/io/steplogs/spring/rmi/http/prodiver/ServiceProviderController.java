@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,7 +20,9 @@ import jakarta.servlet.http.HttpServletResponse;
 @RestController
 public class ServiceProviderController {
 
-	private static final ObjectMapper objectMapper = new ObjectMapper();
+	private static final ObjectMapper objectMapper = JsonMapper.builder()
+		.propertyNamingStrategy(PropertyNamingStrategies.LOWER_CAMEL_CASE)
+		.build();
 	
 	@Resource
 	protected ServiceProviderInvoker serviceProviderInvoker;
