@@ -8,15 +8,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Lazy;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.steplogs.spring.rmi.http.HttpHeaderTransporter;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-@Component
 public class ServiceProviderInvoker {
 
 	private static final ObjectMapper objectMapper = new ObjectMapper();
@@ -30,12 +30,24 @@ public class ServiceProviderInvoker {
 		}
 	};
 	
+	private HttpHeaderTransporter httpHeaderTransporter;
+	
+	public ServiceProviderInvoker (HttpHeaderTransporter httpHeaderTransporter) {
+		this.httpHeaderTransporter = httpHeaderTransporter;
+	}
+	
+	public HttpHeaderTransporter getHttpHeaderTransporter() {
+		return this.httpHeaderTransporter;
+	}
+	 
 	@Resource
+	@Lazy
 	protected ServiceProviderConfiguration serviceProviderConfiguration;
 	
 	static String defaultCharSet = Charset.defaultCharset().name();
 
 	@Autowired(required = false)
+	@Lazy
 	private ErrorHandler errorHandler;
 	
 	public ErrorHandler getErrorHandler() {
@@ -108,14 +120,23 @@ public class ServiceProviderInvoker {
 		Map<Class<?>, Converter> theConverters = new HashMap<>();
 		theConverters.put(String.class, (strValue, toClass) -> strValue.isEmpty() ? "" : URLDecoder.decode(String.valueOf(strValue), defaultCharSet));
 		theConverters.put(Void.class, (strValue, toClass) -> null);
+		theConverters.put(void.class, (strValue, toClass) -> null);
 		theConverters.put(Boolean.class, (strValue, toClass) -> strValue.isEmpty() ? false : Boolean.parseBoolean(strValue));
+		theConverters.put(boolean.class, (strValue, toClass) -> strValue.isEmpty() ? false : Boolean.parseBoolean(strValue));
 		theConverters.put(Byte.class, (strValue, toClass) -> strValue.isEmpty() ? (byte)0 : Byte.parseByte(strValue));
+		theConverters.put(byte.class, (strValue, toClass) -> strValue.isEmpty() ? (byte)0 : Byte.parseByte(strValue));
 		theConverters.put(Character.class, (strValue, toClass) -> strValue.isEmpty() ? '0' : strValue.charAt(0));
+		theConverters.put(char.class, (strValue, toClass) -> strValue.isEmpty() ? '0' : strValue.charAt(0));
 		theConverters.put(Short.class, (strValue, toClass) -> strValue.isEmpty() ? (short)0 : Short.parseShort(strValue));
+		theConverters.put(short.class, (strValue, toClass) -> strValue.isEmpty() ? (short)0 : Short.parseShort(strValue));
 		theConverters.put(Integer.class, (strValue, toClass) -> strValue.isEmpty() ? 0 : Integer.parseInt(strValue));
+		theConverters.put(int.class, (strValue, toClass) -> strValue.isEmpty() ? 0 : Integer.parseInt(strValue));
 		theConverters.put(Long.class, (strValue, toClass) -> strValue.isEmpty() ? 0L : Long.parseLong(strValue));
+		theConverters.put(long.class, (strValue, toClass) -> strValue.isEmpty() ? 0L : Long.parseLong(strValue));
 		theConverters.put(Float.class, (strValue, toClass) -> strValue.isEmpty() ? 0F : Float.parseFloat(strValue));
+		theConverters.put(float.class, (strValue, toClass) -> strValue.isEmpty() ? 0F : Float.parseFloat(strValue));
 		theConverters.put(Double.class, (strValue, toClass) -> strValue.isEmpty() ? 0D : Double.parseDouble(strValue));
+		theConverters.put(double.class, (strValue, toClass) -> strValue.isEmpty() ? 0D : Double.parseDouble(strValue));
 		return theConverters;
 	}
 

@@ -16,7 +16,7 @@ import org.springframework.util.ClassUtils;
 
 import io.steplogs.spring.rmi.http.BeanHelper;
 
-@Import({ServiceProviderController.class, ServiceProviderInvoker.class})
+@Import({ServiceProviderController.class})
 public class ServiceProviderConfiguration implements ApplicationListener<ContextRefreshedEvent> {
 
 	@Override

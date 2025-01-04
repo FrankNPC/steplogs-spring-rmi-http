@@ -16,8 +16,8 @@ public class ServiceSubscriberMethodInterceptor<T> extends AbstractInvokerClient
 	
 	private BeanParser beanParser = new BeanParser();
 	
-	public ServiceSubscriberMethodInterceptor(ServiceTemplate<T> serviceTemplate) {
-		super(serviceTemplate);
+	public ServiceSubscriberMethodInterceptor(ServiceClientTemplate<T> serviceClientTemplate) {
+		super(serviceClientTemplate);
 	}
 	
 	@Override

@@ -15,12 +15,14 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClient.RequestHeadersSpec.ConvertibleClientHttpResponse;
 import org.springframework.web.util.UriBuilder;
 
+import io.steplogs.spring.rmi.http.HttpHeaderTransporter;
+
 public abstract class AbstractInvokerClient<T> {
 
-	protected final ServiceTemplate<T> serviceTemplate;
+	protected final ServiceClientTemplate<T> serviceClientTemplate;
 	
-	public AbstractInvokerClient(ServiceTemplate<T> serviceTemplate) {
-		this.serviceTemplate = serviceTemplate;
+	public AbstractInvokerClient(ServiceClientTemplate<T> serviceClientTemplate) {
+		this.serviceClientTemplate = serviceClientTemplate;
 	}
 
 	/**
@@ -29,14 +31,14 @@ public abstract class AbstractInvokerClient<T> {
 	 * @param typeRef			Type convert to
 	 */
 	protected T get(String path, Map<String, Object> queryVariables, ParameterizedTypeReference<T> typeRef) {
-		RestClient restClient = getRestClient(serviceTemplate);
+		RestClient restClient = getRestClient(serviceClientTemplate);
 
 		return restClient
 				.get()
 				.uri(builder ->  addUriBuilder(builder, path, queryVariables).build())
-				.headers(headers -> addHeaders(serviceTemplate, headers))
+				.headers(headers -> addHeaders(serviceClientTemplate.getRequestHttpHeaderTransporter(), headers))
 				.accept(MediaType.APPLICATION_JSON)
-				.exchange((request, response) -> exchange(serviceTemplate, request, response, typeRef));
+				.exchange((request, response) -> exchange(serviceClientTemplate, request, response, typeRef));
 	}
 
 	/**
@@ -47,16 +49,16 @@ public abstract class AbstractInvokerClient<T> {
 	 * @param typeRef			Type convert to
 	 */
 	protected T post(String path, Map<String, Object> queryVariables, Map<String, Object> formData, ParameterizedTypeReference<T> typeRef) {
-		RestClient restClient = getRestClient(serviceTemplate);
+		RestClient restClient = getRestClient(serviceClientTemplate);
 		
 		return restClient
 				.post()
 				.uri(builder ->  addUriBuilder(builder, path, queryVariables).build())
-				.headers(headers -> addHeaders(serviceTemplate, headers))
+				.headers(headers -> addHeaders(serviceClientTemplate.getRequestHttpHeaderTransporter(), headers))
 				.accept(MediaType.APPLICATION_JSON)
 				.contentType(MediaType.APPLICATION_JSON)
 				.body(formData)
-				.exchange((request, response) -> exchange(serviceTemplate, request, response, typeRef));
+				.exchange((request, response) -> exchange(serviceClientTemplate, request, response, typeRef));
 	}
 
 	
@@ -79,47 +81,48 @@ public abstract class AbstractInvokerClient<T> {
 		return builder;
 	}
 	
-	static HttpHeaders addHeaders(ServiceTemplate<?> serviceTemplate, HttpHeaders headers) {
-		if (serviceTemplate.getHttpHeaderTransporter()!=null) {
-			Map<String, List<String>> httpHeaders = serviceTemplate.getHttpHeaderTransporter().getHttpHeaders();
+	static HttpHeaders addHeaders(HttpHeaderTransporter requestHeaderTransporter, HttpHeaders headers) {
+		if (requestHeaderTransporter!=null) {
+			Map<String, List<String>> httpHeaders = requestHeaderTransporter.getHttpHeaders();
 			if (httpHeaders!=null) {
 				for(Map.Entry<String, List<String>> entry : httpHeaders.entrySet()) {
-					if (entry.getValue().size()==1) {
-						headers.addIfAbsent(entry.getKey(), entry.getValue().get(0));
-					} else {
-						headers.addAll(entry.getKey(), entry.getValue());
-					}
+					if (entry.getValue() == null) { continue; }
+					headers.addAll(entry.getKey(), entry.getValue());
 				}
 			}
 		}
 		return headers;
 	}
 	
-	static RestClient getRestClient(ServiceTemplate<?> serviceTemplate) {
-		if (serviceTemplate.getRestClient()!=null) {
-			return serviceTemplate.getRestClient();
+	static RestClient getRestClient(ServiceClientTemplate<?> serviceClientTemplate) {
+		if (serviceClientTemplate.getRestClient()!=null) {
+			return serviceClientTemplate.getRestClient();
 		}else {
 			return RestClient
 				.builder().requestFactory(new HttpComponentsClientHttpRequestFactory())
-				.baseUrl(serviceTemplate.getBaseUrl())
+				.baseUrl(serviceClientTemplate.getBaseUrl())
 //				.messageConverters(null)
 				.build();
 		}
 	}
 	
-	static <T> T exchange(ServiceTemplate<T> serviceTemplate, 
+	static <T> T exchange(ServiceClientTemplate<T> serviceClientTemplate, 
 			HttpRequest request, ConvertibleClientHttpResponse response, 
 			ParameterizedTypeReference<T> typeRef) throws IOException {
+		HttpHeaderTransporter responseHeaderTransporter = serviceClientTemplate.getResponseHttpHeaderTransporter();
+		if (responseHeaderTransporter!=null) {
+			responseHeaderTransporter.setHttpHeaders(response.getHeaders());
+		}
 		if (response.getStatusCode().isError()) {
-			if (serviceTemplate.getErrorHandler()!=null) {
-				serviceTemplate.getErrorHandler().handle(request, response);
+			if (serviceClientTemplate.getErrorHandler()!=null) {
+//				serviceClientTemplate.getErrorHandler().handle(request, response);
 			}
-			return serviceTemplate.getDefaultErrorResponse();
+			return serviceClientTemplate.getDefaultErrorResponse();
 		} else {
 			try {
 				return response.bodyTo(typeRef);
 			}catch(Exception e) {
-				return serviceTemplate.getDefaultErrorResponse();
+				return serviceClientTemplate.getDefaultErrorResponse();
 			}
 		}
 	}

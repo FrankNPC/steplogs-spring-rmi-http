@@ -4,13 +4,17 @@ import org.aopalliance.aop.Advice;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClient.ResponseSpec.ErrorHandler;
 
-public interface ServiceTemplate<T> {
+import io.steplogs.spring.rmi.http.HttpHeaderTransporter;
+
+public interface ServiceClientTemplate<T> {
 	
 	default String getBaseUrl() {return null;}
 	
 	default RestClient getRestClient() {return null;}
-	
-	default HttpHeaderTransporter getHttpHeaderTransporter() {return null;}
+
+	default HttpHeaderTransporter getRequestHttpHeaderTransporter() {return null;}
+
+	default HttpHeaderTransporter getResponseHttpHeaderTransporter() {return null;}
 	
 	default ErrorHandler getErrorHandler() {return null;}
 

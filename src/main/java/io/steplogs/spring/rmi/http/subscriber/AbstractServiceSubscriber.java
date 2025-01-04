@@ -16,15 +16,15 @@ public abstract class AbstractServiceSubscriber {
 	 * @param advices				Advices for the proxy
 	 */
 	@SuppressWarnings("unchecked")
-	protected <T> T getProxyFactoryBean(Class<T> clazz, ServiceTemplate<?> serviceTemplate) {
+	protected <T> T getProxyFactoryBean(Class<T> clazz, ServiceClientTemplate<?> serviceClientTemplate) {
 		ProxyFactoryBean factory = new ProxyFactoryBean();
 		factory.addInterface(clazz);
-		if (serviceTemplate.getAdvices()!=null) {
-			for(Advice advice : serviceTemplate.getAdvices()) {
+		if (serviceClientTemplate.getAdvices()!=null) {
+			for(Advice advice : serviceClientTemplate.getAdvices()) {
 				factory.addAdvice(advice);
 			}
 		}
-		factory.addAdvice(new ServiceSubscriberMethodInterceptor<>(serviceTemplate));
+		factory.addAdvice(new ServiceSubscriberMethodInterceptor<>(serviceClientTemplate));
 		return (T) factory.getObject();
 	}
 }
