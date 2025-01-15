@@ -2,11 +2,9 @@ package io.steplogs.spring.rmi.http.prodiver;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
+import java.util.stream.Stream;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
@@ -34,24 +32,30 @@ public class ServiceProviderConfiguration implements ApplicationListener<Context
 		if (beans.isEmpty()) {
 			synchronized (this) {
 				if (beans.isEmpty()) {
-					Set<String> annotationNames = new HashSet<>(Arrays.asList("Provider"));
 					Map<String, InvokeTarget> prepBeans = new HashMap<>(beans);
 					
 					Map<String, ?> map = applicationContext.getBeansOfType(Object.class);
 					for (Map.Entry<String, ?> entry : map.entrySet()) {
 						String serviceName = BeanHelper.parseServiceName(entry.getKey());
-						boolean isProviderPresent = BeanHelper.detectAnnotationByName(
-								ClassUtils.getUserClass(entry.getValue()).getAnnotations(), annotationNames);
+						
+						Provider classProvider = (Provider) Stream.of(ClassUtils.getUserClass(entry.getValue()).getAnnotations()).findFirst().orElse(null);
+						
 						Class<?>[] interfaces = ClassUtils.getUserClass(entry.getValue().getClass()).getInterfaces();
 						for (Class<?> iface : interfaces) {
 							Method[] methods = iface.getDeclaredMethods();
 							for (Method method : methods) {
 								if (!Modifier.isStatic(method.getModifiers()) && !Modifier.isFinal(method.getModifiers())
 										&& Modifier.isPublic(method.getModifiers())
-										&& (isProviderPresent || BeanHelper.detectAnnotationByName(method.getAnnotations(), annotationNames))
 										) {
-									String path = BeanHelper.parseMethodName(serviceName, method.getName());
-									prepBeans.put(path, new InvokeTarget(entry.getValue(), method));
+									
+									Provider methodProvider = (Provider) Stream.of(method.getAnnotations()).findFirst().orElse(null);
+									if (methodProvider!=null) {
+										String path = BeanHelper.parseMethodName(methodProvider, serviceName, method.getName());
+										prepBeans.put(path, new InvokeTarget(entry.getValue(), method));
+									}else if (classProvider!=null) {
+										String path = BeanHelper.parseMethodName(classProvider, serviceName, method.getName());
+										prepBeans.put(path, new InvokeTarget(entry.getValue(), method));
+									}
 								}
 							}
 						}

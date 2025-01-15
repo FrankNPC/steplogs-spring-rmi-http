@@ -6,6 +6,8 @@ import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 
+import io.steplogs.spring.rmi.http.prodiver.Provider;
+
 public class BeanHelper {
 	
 	public static boolean detectAnnotationByName(Annotation[] annotations, Set<String> annotationNames) {
@@ -26,5 +28,8 @@ public class BeanHelper {
 				.translate(methodName);
 		return "/" + serviceName + "/" + methodName;
 	}
-
+	
+	public static String parseMethodName(Provider methodProvider, String serviceName, String methodName) {
+		return methodProvider.value() + parseMethodName(serviceName, methodName);
+	}
 }

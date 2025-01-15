@@ -9,4 +9,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE, ElementType.METHOD})
 public @interface Provider {
 
+    String value() default "";
+
 }

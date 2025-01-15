@@ -3,13 +3,14 @@ package io.steplogs.spring.rmi.http;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import io.steplogs.spring.rmi.http.prodiver.Provider;
 
-@Provider
+@Provider("/api/v1")
 public class BeanHelperTester {
 
 	@Test
@@ -17,8 +18,10 @@ public class BeanHelperTester {
 		String name = BeanHelper.parseServiceName("AccountServiceImpl");
 		Assertions.assertEquals("account", name);
 
-		String method = BeanHelper.parseMethodName(name, "loginByUserName");
-		Assertions.assertEquals("/account/login_by_user_name", method);
+		Provider classProvider = (Provider) Stream.of(BeanHelperTester.class.getAnnotations()).findFirst().orElse(null);
+
+		String method = BeanHelper.parseMethodName(classProvider, name, "loginByUserName");
+		Assertions.assertEquals("/api/v1/account/login_by_user_name", method);
 	}
 
 	@Provider
