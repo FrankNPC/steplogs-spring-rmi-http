@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.springframework.context.ApplicationContext;
@@ -38,7 +39,7 @@ public class ServiceProviderConfiguration implements ApplicationListener<Context
 					for (Map.Entry<String, ?> entry : map.entrySet()) {
 						String serviceName = BeanHelper.parseServiceName(entry.getKey());
 						
-						Provider classProvider = (Provider) Stream.of(ClassUtils.getUserClass(entry.getValue()).getAnnotations()).findFirst().orElse(null);
+						Optional<Provider> classProvider = Stream.of(ClassUtils.getUserClass(entry.getValue()).getAnnotations()).filter(anno->anno instanceof Provider).map(item->(Provider)item).findAny();
 						
 						Class<?>[] interfaces = ClassUtils.getUserClass(entry.getValue().getClass()).getInterfaces();
 						for (Class<?> iface : interfaces) {
@@ -48,12 +49,12 @@ public class ServiceProviderConfiguration implements ApplicationListener<Context
 										&& Modifier.isPublic(method.getModifiers())
 										) {
 									
-									Provider methodProvider = (Provider) Stream.of(method.getAnnotations()).findFirst().orElse(null);
-									if (methodProvider!=null) {
-										String path = BeanHelper.parseMethodName(methodProvider, serviceName, method.getName());
+									Optional<Provider> methodProvider = Stream.of(method.getAnnotations()).filter(anno->anno instanceof Provider).map(item->(Provider)item).findFirst();
+									if (methodProvider.isPresent()) {
+										String path = BeanHelper.parseMethodName(methodProvider.get(), serviceName, method.getName());
 										prepBeans.put(path, new InvokeTarget(entry.getValue(), method));
-									}else if (classProvider!=null) {
-										String path = BeanHelper.parseMethodName(classProvider, serviceName, method.getName());
+									}else if (classProvider.isPresent()) {
+										String path = BeanHelper.parseMethodName(classProvider.get(), serviceName, method.getName());
 										prepBeans.put(path, new InvokeTarget(entry.getValue(), method));
 									}
 								}
