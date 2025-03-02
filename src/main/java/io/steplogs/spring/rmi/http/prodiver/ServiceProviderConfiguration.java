@@ -31,39 +31,41 @@ public class ServiceProviderConfiguration implements ApplicationListener<Context
 	
 	private void initialize(ApplicationContext applicationContext) {
 		if (beans.isEmpty()) {
-			synchronized (this) {
-				if (beans.isEmpty()) {
-					Map<String, InvokeTarget> prepBeans = new HashMap<>(beans);
-					
-					Map<String, ?> map = applicationContext.getBeansOfType(Object.class);
-					for (Map.Entry<String, ?> entry : map.entrySet()) {
-						String serviceName = BeanHelper.parseServiceName(entry.getKey());
-						
-						Optional<Provider> classProvider = Stream.of(ClassUtils.getUserClass(entry.getValue()).getAnnotations()).filter(anno->anno instanceof Provider).map(item->(Provider)item).findAny();
-						
-						Class<?>[] interfaces = ClassUtils.getUserClass(entry.getValue().getClass()).getInterfaces();
-						for (Class<?> iface : interfaces) {
-							Method[] methods = iface.getDeclaredMethods();
-							for (Method method : methods) {
-								if (!Modifier.isStatic(method.getModifiers()) && !Modifier.isFinal(method.getModifiers())
-										&& Modifier.isPublic(method.getModifiers())
-										) {
-									
-									Optional<Provider> methodProvider = Stream.of(method.getAnnotations()).filter(anno->anno instanceof Provider).map(item->(Provider)item).findFirst();
-									if (methodProvider.isPresent()) {
-										String path = BeanHelper.parseMethodName(methodProvider.get(), serviceName, method.getName());
-										prepBeans.put(path, new InvokeTarget(entry.getValue(), method));
-									}else if (classProvider.isPresent()) {
-										String path = BeanHelper.parseMethodName(classProvider.get(), serviceName, method.getName());
-										prepBeans.put(path, new InvokeTarget(entry.getValue(), method));
-									}
-								}
+			initializeApplicationContext(applicationContext);
+		}
+	}
+	
+	private synchronized void initializeApplicationContext(ApplicationContext applicationContext) {
+		if (beans.isEmpty()) {
+			Map<String, InvokeTarget> prepBeans = new HashMap<>(beans);
+			
+			Map<String, ?> map = applicationContext.getBeansOfType(Object.class);
+			for (Map.Entry<String, ?> entry : map.entrySet()) {
+				String serviceName = BeanHelper.parseServiceName(entry.getKey());
+				
+				Optional<Provider> classProvider = Stream.of(ClassUtils.getUserClass(entry.getValue()).getAnnotations()).filter(anno->anno instanceof Provider).map(item->(Provider)item).findAny();
+				
+				Class<?>[] interfaces = ClassUtils.getUserClass(entry.getValue().getClass()).getInterfaces();
+				for (Class<?> iface : interfaces) {
+					Method[] methods = iface.getDeclaredMethods();
+					for (Method method : methods) {
+						if (!Modifier.isStatic(method.getModifiers()) && !Modifier.isFinal(method.getModifiers())
+								&& Modifier.isPublic(method.getModifiers())
+								) {
+							
+							Optional<Provider> methodProvider = Stream.of(method.getAnnotations()).filter(anno->anno instanceof Provider).map(item->(Provider)item).findFirst();
+							if (methodProvider.isPresent()) {
+								String path = BeanHelper.parseMethodName(methodProvider.get(), serviceName, method.getName());
+								prepBeans.put(path, new InvokeTarget(entry.getValue(), method));
+							}else if (classProvider.isPresent()) {
+								String path = BeanHelper.parseMethodName(classProvider.get(), serviceName, method.getName());
+								prepBeans.put(path, new InvokeTarget(entry.getValue(), method));
 							}
 						}
 					}
-					beans = prepBeans;
 				}
 			}
+			beans = prepBeans;
 		}
 	}
 

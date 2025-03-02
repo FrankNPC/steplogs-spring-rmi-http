@@ -25,13 +25,17 @@ class BeanParser {
 	protected FormKeys parseForm(Method method) {
 		FormKeys form = pathMap.get(method);
 		if (form==null) {
-			synchronized(this){
-				form = pathMap.get(method);
-				if (form==null) {
-					Map<Method, FormKeys> prePathMap = new HashMap<>(pathMap);
-					String serviceName = method.getDeclaringClass().getSimpleName();
-					serviceName = serviceName.substring(serviceName.lastIndexOf(".")+1);
-					serviceName = BeanHelper.parseServiceName(serviceName);
+			form = initFormKeys(method);
+		}
+		return form;
+	}
+	private synchronized FormKeys initFormKeys(Method method){
+		FormKeys form = pathMap.get(method);
+		if (form==null) {
+			Map<Method, FormKeys> prePathMap = new HashMap<>(pathMap);
+			String serviceName = method.getDeclaringClass().getSimpleName();
+			serviceName = serviceName.substring(serviceName.lastIndexOf(".")+1);
+			serviceName = BeanHelper.parseServiceName(serviceName);
 
 //					String methodName = method.getName();
 //					methodName = PropertyNamingStrategies.SnakeCaseStrategy.INSTANCE.translate(methodName);
@@ -40,31 +44,29 @@ class BeanParser {
 //					serviceName = serviceName.replace("_impl", "");
 //					serviceName = serviceName.replace("_service", "");
 
-					String path = BeanHelper.parseMethodName(serviceName, method.getName());
-					
-					if (!path.matches("^/[a-zA-Z0-9_\\\\-]+/[a-zA-Z0-9_\\\\-]+.*$")) {
-						throw new RuntimeException("Invalid service name. It should be [/_0-9a-z\\-].");
-					}
+			String path = BeanHelper.parseMethodName(serviceName, method.getName());
+			
+			if (!path.matches("^/[a-zA-Z0-9_\\\\-]+/[a-zA-Z0-9_\\\\-]+.*$")) {
+				throw new RuntimeException("Invalid service name. It should be [/_0-9a-z\\-].");
+			}
 
-					Parameter[] params = method.getParameters();
-					String[] primativeKeys = new String[params.length];
-					String[] formKeys = new String[params.length];
-					
-					for(int i=0; i<params.length; i++) {
-						String key = params[i].getName();
+			Parameter[] params = method.getParameters();
+			String[] primativeKeys = new String[params.length];
+			String[] formKeys = new String[params.length];
+			
+			for(int i=0; i<params.length; i++) {
+				String key = params[i].getName();
 //						key = PropertyNamingStrategies.SnakeCaseStrategy.INSTANCE.translate(key);
-						if (isWrapperOrStringType(params[i].getType())) {
-							primativeKeys[i] = key;
-						}else {
-							formKeys[i] = key;
-						}
-					}
-					form = new FormKeys(path, primativeKeys, formKeys);
-					
-					prePathMap.put(method, form);
-					pathMap = prePathMap;
+				if (isWrapperOrStringType(params[i].getType())) {
+					primativeKeys[i] = key;
+				}else {
+					formKeys[i] = key;
 				}
 			}
+			form = new FormKeys(path, primativeKeys, formKeys);
+			
+			prePathMap.put(method, form);
+			pathMap = prePathMap;
 		}
 		return form;
 	}
