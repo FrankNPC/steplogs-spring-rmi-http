@@ -32,7 +32,6 @@ class BeanParser {
 	private synchronized FormKeys initFormKeys(Method method){
 		FormKeys form = pathMap.get(method);
 		if (form==null) {
-			Map<Method, FormKeys> prePathMap = new HashMap<>(pathMap);
 			String serviceName = method.getDeclaringClass().getSimpleName();
 			serviceName = serviceName.substring(serviceName.lastIndexOf(".")+1);
 			serviceName = BeanHelper.parseServiceName(serviceName);
@@ -64,7 +63,8 @@ class BeanParser {
 				}
 			}
 			form = new FormKeys(path, primativeKeys, formKeys);
-			
+
+			Map<Method, FormKeys> prePathMap = new HashMap<>(pathMap);
 			prePathMap.put(method, form);
 			pathMap = prePathMap;
 		}
