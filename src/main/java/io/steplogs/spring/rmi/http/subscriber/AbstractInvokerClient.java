@@ -3,19 +3,15 @@ package io.steplogs.spring.rmi.http.subscriber;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClient.RequestHeadersSpec.ConvertibleClientHttpResponse;
 import org.springframework.web.util.UriBuilder;
-
-import io.steplogs.spring.rmi.http.HttpHeaderTransporter;
 
 public abstract class AbstractInvokerClient<T> {
 
@@ -36,7 +32,7 @@ public abstract class AbstractInvokerClient<T> {
 		return restClient
 				.get()
 				.uri(builder ->  addUriBuilder(builder, path, queryVariables).build())
-				.headers(headers -> addHeaders(serviceClientTemplate.getRequestHttpHeaderTransporter(), headers))
+//				.headers(headers -> addHeaders(serviceClientTemplate.getRequestHttpHeaderTransporter(), headers))
 				.accept(MediaType.APPLICATION_JSON)
 				.exchange((request, response) -> exchange(serviceClientTemplate, request, response, typeRef));
 	}
@@ -54,7 +50,7 @@ public abstract class AbstractInvokerClient<T> {
 		return restClient
 				.post()
 				.uri(builder ->  addUriBuilder(builder, path, queryVariables).build())
-				.headers(headers -> addHeaders(serviceClientTemplate.getRequestHttpHeaderTransporter(), headers))
+//				.headers(headers -> addHeaders(serviceClientTemplate.getRequestHttpHeaderTransporter(), headers))
 				.accept(MediaType.APPLICATION_JSON)
 				.contentType(MediaType.APPLICATION_JSON)
 				.body(formData)
@@ -81,18 +77,18 @@ public abstract class AbstractInvokerClient<T> {
 		return builder;
 	}
 	
-	static HttpHeaders addHeaders(HttpHeaderTransporter requestHeaderTransporter, HttpHeaders headers) {
-		if (requestHeaderTransporter!=null) {
-			Map<String, List<String>> httpHeaders = requestHeaderTransporter.getHttpHeaders();
-			if (httpHeaders!=null) {
-				for(Map.Entry<String, List<String>> entry : httpHeaders.entrySet()) {
-					if (entry.getValue() == null) { continue; }
-					headers.addAll(entry.getKey(), entry.getValue());
-				}
-			}
-		}
-		return headers;
-	}
+//	static HttpHeaders addHeaders(HttpHeaderTransporter requestHeaderTransporter, HttpHeaders headers) {
+//		if (requestHeaderTransporter!=null) {
+//			Map<String, List<String>> httpHeaders = requestHeaderTransporter.getHttpHeaders();
+//			if (httpHeaders!=null) {
+//				for(Map.Entry<String, List<String>> entry : httpHeaders.entrySet()) {
+//					if (entry.getValue() == null) { continue; }
+//					headers.addAll(entry.getKey(), entry.getValue());
+//				}
+//			}
+//		}
+//		return headers;
+//	}
 	
 	static RestClient getRestClient(ServiceClientTemplate<?> serviceClientTemplate) {
 		if (serviceClientTemplate.getRestClient()!=null) {
@@ -109,10 +105,10 @@ public abstract class AbstractInvokerClient<T> {
 	static <T> T exchange(ServiceClientTemplate<T> serviceClientTemplate, 
 			HttpRequest request, ConvertibleClientHttpResponse response, 
 			ParameterizedTypeReference<T> typeRef) throws IOException {
-		HttpHeaderTransporter responseHeaderTransporter = serviceClientTemplate.getResponseHttpHeaderTransporter();
-		if (responseHeaderTransporter!=null) {
-			responseHeaderTransporter.setHttpHeaders(response.getHeaders());
-		}
+//		HttpHeaderTransporter responseHeaderTransporter = serviceClientTemplate.getResponseHttpHeaderTransporter();
+//		if (responseHeaderTransporter!=null) {
+//			responseHeaderTransporter.setHttpHeaders(response.getHeaders());
+//		}
 		if (response.getStatusCode().isError()) {
 			if (serviceClientTemplate.getErrorHandler()!=null) {
 //				serviceClientTemplate.getErrorHandler().handle(request, response);

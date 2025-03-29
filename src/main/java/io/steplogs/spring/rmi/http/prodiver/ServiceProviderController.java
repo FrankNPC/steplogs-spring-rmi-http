@@ -3,6 +3,7 @@ package io.steplogs.spring.rmi.http.prodiver;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -32,7 +33,13 @@ public class ServiceProviderController {
 	
 	@Resource
 	@Lazy
-	protected ServiceProviderInvoker serviceProviderInvoker;
+	ServiceProviderInvoker serviceProviderInvoker;
+
+	@Bean
+	@Lazy
+	ServiceProviderInvoker getServiceProviderInvoker() {
+		return new ServiceProviderInvoker();
+	}
 
 	@GetMapping(value="/*/**", produces= {MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<String> get(HttpServletRequest request, HttpServletResponse response) {

@@ -9,6 +9,7 @@ import java.util.stream.Stream;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.util.ClassUtils;
@@ -16,6 +17,7 @@ import org.springframework.util.ClassUtils;
 import io.steplogs.spring.rmi.http.BeanHelper;
 
 @Import({ServiceProviderController.class})
+@Configuration
 public class ServiceProviderConfiguration implements ApplicationListener<ContextRefreshedEvent> {
 
 	@Override

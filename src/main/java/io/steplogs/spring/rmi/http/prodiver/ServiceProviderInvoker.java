@@ -7,6 +7,7 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,18 +32,13 @@ public class ServiceProviderInvoker {
 
 	@Resource
 	@Lazy
-	private ServiceProviderConfiguration serviceProviderConfiguration;
+	ServiceProviderConfiguration serviceProviderConfiguration;
 
-	private ErrorHandler errorHandler = DEFAULT_ERROR_HANDLER;
-	
-	private HttpHeaderTransporter httpHeaderTransporter;
-	
-	public ServiceProviderInvoker (
-			HttpHeaderTransporter httpHeaderTransporter,
-			ErrorHandler errorHandler) {
-		this.errorHandler = errorHandler==null?this.errorHandler:errorHandler;
-		this.httpHeaderTransporter = httpHeaderTransporter;
-	}
+    @Autowired(required = false)
+    ErrorHandler errorHandler = DEFAULT_ERROR_HANDLER;
+
+    @Autowired(required = false)
+	HttpHeaderTransporter httpHeaderTransporter;
 	
 	public HttpHeaderTransporter getHttpHeaderTransporter() {
 		return this.httpHeaderTransporter;
