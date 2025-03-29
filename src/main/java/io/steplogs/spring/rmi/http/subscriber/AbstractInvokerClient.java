@@ -15,6 +15,16 @@ import org.springframework.web.util.UriBuilder;
 
 public abstract class AbstractInvokerClient<T> {
 
+//	private static final ObjectMapper objectMapper = JsonMapper.builder()
+//		.serializationInclusion(JsonInclude.Include.NON_NULL)
+//		.build();
+//	
+//	public static final Consumer<List<HttpMessageConverter<?>>> HttpMessageConverter = (converters) -> {
+//        MappingJackson2HttpMessageConverter jsonConverter = new MappingJackson2HttpMessageConverter(objectMapper);
+//        converters.removeIf(c -> c instanceof MappingJackson2HttpMessageConverter);
+//        converters.add(jsonConverter);
+//    };
+	
 	protected final ServiceClientTemplate<T> serviceClientTemplate;
 	
 	public AbstractInvokerClient(ServiceClientTemplate<T> serviceClientTemplate) {
@@ -97,7 +107,7 @@ public abstract class AbstractInvokerClient<T> {
 			return RestClient
 				.builder().requestFactory(new HttpComponentsClientHttpRequestFactory())
 				.baseUrl(serviceClientTemplate.getBaseUrl())
-//				.messageConverters(null)
+//	            .messageConverters(HttpMessageConverter)
 				.build();
 		}
 	}
