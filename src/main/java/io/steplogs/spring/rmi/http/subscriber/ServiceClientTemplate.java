@@ -1,6 +1,6 @@
 package io.steplogs.spring.rmi.http.subscriber;
 
-import org.aopalliance.aop.Advice;
+import org.springframework.aop.Advisor;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClient.ResponseSpec.ErrorHandler;
 
@@ -16,6 +16,6 @@ public interface ServiceClientTemplate<T> {
 
 	default T getDefaultErrorResponse() {return null;}
 	
-	default Advice[] getAdvices() {return null;}
+	default Advisor[] getAdvisors() {return null;}
 	
 }

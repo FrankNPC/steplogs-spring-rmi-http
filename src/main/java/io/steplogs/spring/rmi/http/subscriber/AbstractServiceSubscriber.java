@@ -1,6 +1,6 @@
 package io.steplogs.spring.rmi.http.subscriber;
 
-import org.aopalliance.aop.Advice;
+import org.springframework.aop.Advisor;
 import org.springframework.aop.framework.ProxyFactoryBean;
 
 public abstract class AbstractServiceSubscriber {
@@ -13,15 +13,15 @@ public abstract class AbstractServiceSubscriber {
 	 * @param httpHeaderTransporter	Copy, add or transport headers such as Authorization
 	 * @param errorHandler			Error handler
 	 * @param errorResponse			Default response if there is any error
-	 * @param advices				Advices for the proxy
+	 * @param advisors				Advisor for the proxy
 	 */
 	@SuppressWarnings("unchecked")
 	protected <T> T getProxyFactoryBean(Class<T> clazz, ServiceClientTemplate<?> serviceClientTemplate) {
 		ProxyFactoryBean factory = new ProxyFactoryBean();
 		factory.addInterface(clazz);
-		if (serviceClientTemplate.getAdvices()!=null) {
-			for(Advice advice : serviceClientTemplate.getAdvices()) {
-				factory.addAdvice(advice);
+		if (serviceClientTemplate.getAdvisors()!=null) {
+			for(Advisor advisor : serviceClientTemplate.getAdvisors()) {
+				factory.addAdvisor(advisor);
 			}
 		}
 		factory.addAdvice(new ServiceSubscriberMethodInterceptor<>(serviceClientTemplate));
