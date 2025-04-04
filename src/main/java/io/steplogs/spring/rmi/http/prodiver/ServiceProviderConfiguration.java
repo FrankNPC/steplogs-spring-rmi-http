@@ -26,11 +26,11 @@ public class ServiceProviderConfiguration implements BeanPostProcessor {
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) {
-    	initializeBeanToPath(bean, beanName);
+    	initializeBeanToInvokeTarget(bean, beanName);
         return bean;
     }
 
-	private synchronized void initializeBeanToPath(Object bean, String beanName) {
+	private synchronized void initializeBeanToInvokeTarget(Object bean, String beanName) {
 		Map<String, InvokeTarget> prepBeans = new HashMap<>(beans);
 		
 		Class<?> clazz = ClassUtils.getUserClass(bean);
