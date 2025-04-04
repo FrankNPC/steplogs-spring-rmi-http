@@ -7,68 +7,52 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationListener;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.util.ClassUtils;
 
 import io.steplogs.spring.rmi.http.BeanHelper;
 
-@Import({ServiceProviderController.class})
 @Configuration
-public class ServiceProviderConfiguration implements ApplicationListener<ContextRefreshedEvent> {
-
-	@Override
-	public void onApplicationEvent(ContextRefreshedEvent event) {
-		this.initialize(event.getApplicationContext());
-	}
+@Import({ServiceProviderController.class})
+public class ServiceProviderConfiguration implements BeanPostProcessor {
 
 	private Map<String, InvokeTarget> beans = new HashMap<>();
 	
 	InvokeTarget getServiceInvokeTarget(String url) {
 		return beans.get(url);
 	}
-	
-	private void initialize(ApplicationContext applicationContext) {
-		if (beans.isEmpty()) {
-			initializeApplicationContext(applicationContext);
-		}
-	}
-	
-	private synchronized void initializeApplicationContext(ApplicationContext applicationContext) {
-		if (beans.isEmpty()) {
-			Map<String, InvokeTarget> prepBeans = new HashMap<>(beans);
-			
-			Map<String, ?> map = applicationContext.getBeansOfType(Object.class);
-			for (Map.Entry<String, ?> entry : map.entrySet()) {
-				String serviceName = BeanHelper.parseServiceName(entry.getKey());
+
+    @Override
+    public Object postProcessAfterInitialization(Object bean, String beanName) {
+    	initializeBeanToPath(bean, beanName);
+        return bean;
+    }
+
+	private synchronized void initializeBeanToPath(Object bean, String beanName) {
+		Map<String, InvokeTarget> prepBeans = new HashMap<>(beans);
+		
+		Class<?> clazz = ClassUtils.getUserClass(bean);
+		String serviceName = BeanHelper.parseServiceName(beanName);
+		Optional<Provider> classProvider = Stream.of(ClassUtils.getUserClass(bean).getAnnotations()).filter(anno->anno instanceof Provider).map(item->(Provider)item).findAny();
+		
+		Method[] methods = clazz.getDeclaredMethods();
+		for (Method method : methods) {
+			if (!Modifier.isStatic(method.getModifiers()) && !Modifier.isPrivate(method.getModifiers())) {
 				
-				Optional<Provider> classProvider = Stream.of(ClassUtils.getUserClass(entry.getValue()).getAnnotations()).filter(anno->anno instanceof Provider).map(item->(Provider)item).findAny();
-				
-				Class<?>[] interfaces = ClassUtils.getUserClass(entry.getValue().getClass()).getInterfaces();
-				for (Class<?> iface : interfaces) {
-					Method[] methods = iface.getDeclaredMethods();
-					for (Method method : methods) {
-						if (!Modifier.isStatic(method.getModifiers()) && !Modifier.isFinal(method.getModifiers())
-								&& Modifier.isPublic(method.getModifiers())
-								) {
-							
-							Optional<Provider> methodProvider = Stream.of(method.getAnnotations()).filter(anno->anno instanceof Provider).map(item->(Provider)item).findFirst();
-							if (methodProvider.isPresent()) {
-								String path = BeanHelper.parseMethodName(methodProvider.get(), serviceName, method.getName());
-								prepBeans.put(path, new InvokeTarget(entry.getValue(), method));
-							}else if (classProvider.isPresent()) {
-								String path = BeanHelper.parseMethodName(classProvider.get(), serviceName, method.getName());
-								prepBeans.put(path, new InvokeTarget(entry.getValue(), method));
-							}
-						}
-					}
+				Optional<Provider> methodProvider = Stream.of(method.getAnnotations()).filter(anno->anno instanceof Provider).map(item->(Provider)item).findFirst();
+				if (methodProvider.isPresent()) {
+					String path = BeanHelper.parseMethodName(methodProvider.get(), serviceName, method.getName());
+					prepBeans.put(path, new InvokeTarget(bean, method));
+				}else if (classProvider.isPresent()) {
+					String path = BeanHelper.parseMethodName(classProvider.get(), serviceName, method.getName());
+					prepBeans.put(path, new InvokeTarget(bean, method));
 				}
 			}
-			beans = prepBeans;
 		}
+		
+		beans = prepBeans;
 	}
 
 }
