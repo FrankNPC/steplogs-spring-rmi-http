@@ -14,7 +14,7 @@ import jakarta.annotation.Resource;
 @Configuration // declare @Configuration to scan beans
 public class ExampleServiceSubscriber<T> extends AbstractServiceSubscriber implements ServiceClientTemplate<T> {
 
-	@Value("${service.host:http://localhost/api}")
+	@Value("${service.host}") // eg http://localhost/api
 	private String host;
 
 	@Override
