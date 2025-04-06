@@ -17,16 +17,16 @@ public class BeanHelper {
 	
 	public static String parseServiceName(String serviceName) {
 		serviceName = PropertyNamingStrategies.SnakeCaseStrategy.INSTANCE.translate(serviceName);
-		serviceName = serviceName.replace("_service_impl", "");
-		serviceName = serviceName.replace("_impl", "");
-		serviceName = serviceName.replace("_service", "");
+		serviceName = serviceName.replaceAll("_service_impl$", "");
+		serviceName = serviceName.replaceAll("_impl$", "");
+		serviceName = serviceName.replaceAll("_service$", "");
 		return serviceName;
 	}
 
 	public static String parseMethodName(String serviceName, String methodName) {
 		methodName = PropertyNamingStrategies.SnakeCaseStrategy.INSTANCE
 				.translate(methodName);
-		return "/" + serviceName + "/" + methodName;
+		return serviceName + "/" + methodName;
 	}
 	
 	public static String parseMethodName(Provider methodProvider, String serviceName, String methodName) {

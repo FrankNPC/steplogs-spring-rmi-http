@@ -36,16 +36,9 @@ class BeanParser {
 			serviceName = serviceName.substring(serviceName.lastIndexOf(".")+1);
 			serviceName = BeanHelper.parseServiceName(serviceName);
 
-//					String methodName = method.getName();
-//					methodName = PropertyNamingStrategies.SnakeCaseStrategy.INSTANCE.translate(methodName);
-//
-//					serviceName = PropertyNamingStrategies.SnakeCaseStrategy.INSTANCE.translate(serviceName);
-//					serviceName = serviceName.replace("_impl", "");
-//					serviceName = serviceName.replace("_service", "");
-
 			String path = BeanHelper.parseMethodName(serviceName, method.getName());
 			
-			if (!path.matches("^/[a-zA-Z0-9_\\\\-]+/[a-zA-Z0-9_\\\\-]+.*$")) {
+			if (!path.matches("^[a-zA-Z0-9_\\\\-]+/[a-zA-Z0-9_\\\\-]+.*$")) {
 				throw new RuntimeException("Invalid service name. It should be [/_0-9a-z\\-].");
 			}
 

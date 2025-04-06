@@ -14,7 +14,7 @@ import io.steplogs.spring.rmi.http.subscriber.ExampleServiceSubscriber;
 public class ExampleServiceProvider {
 
 	// Just an example
-	@Provider
+	@Provider("/api/") // /api/account/get_by_id
 	@Service
 	class AccountServiceImpl implements ExampleServiceSubscriber.AccountService {
 		@Override
