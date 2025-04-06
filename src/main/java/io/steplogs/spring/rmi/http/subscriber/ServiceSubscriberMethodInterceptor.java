@@ -33,7 +33,7 @@ public class ServiceSubscriberMethodInterceptor<T> extends AbstractInvokerClient
 			if (objects[i]==null) { continue; }
 			if (form.primativeKeys[i]!=null) {
 				queryVariables.put(form.primativeKeys[i], objects[i]);
-			}else if (form.formKeys[i]!=null){
+			}else {
 				formData.put(form.formKeys[i], objects[i]);
 			}
 		}
