@@ -56,7 +56,7 @@ class BeanParser {
 			for(int i=0; i<params.length; i++) {
 				String key = params[i].getName();
 //						key = PropertyNamingStrategies.SnakeCaseStrategy.INSTANCE.translate(key);
-				if (isWrapperOrStringType(params[i].getType())) {
+				if (params[i].getType().isPrimitive()) {
 					primativeKeys[i] = key;
 				}else {
 					formKeys[i] = key;
@@ -71,9 +71,9 @@ class BeanParser {
 		return form;
 	}
 
-	private static final boolean isWrapperOrStringType(Class<?> clazz) {
-		return clazz.isPrimitive()
-				|| clazz.equals(String.class);
-	}
+//	private static final boolean isWrapperOrStringType(Class<?> clazz) {
+//		return clazz.isPrimitive()
+//				|| clazz.equals(String.class);
+//	}
 	
 }
