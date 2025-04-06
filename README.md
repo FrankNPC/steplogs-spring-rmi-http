@@ -15,12 +15,11 @@
 				</configuration>
 			</plugin>
 		</plugins>
-		
 ```
 
  - The class name and method will be translate to path string:
 
-> AccountServiceImpl.login -> /account/login
+> AccountServiceImpl.login -> account/login
 > so, do not use the duplicated method name in the service.
 
  - The parameters right on the method in types of primitives will be on the URL as query string.

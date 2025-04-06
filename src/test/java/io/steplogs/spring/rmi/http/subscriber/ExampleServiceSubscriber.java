@@ -14,12 +14,12 @@ import jakarta.annotation.Resource;
 @Configuration // declare @Configuration to scan beans
 public class ExampleServiceSubscriber<T> extends AbstractServiceSubscriber implements ServiceClientTemplate<T> {
 
-	@Value("${steplogs.service.profile.host}")
-	private String profileHost;
+	@Value("${service.host:http://localhost/api}")
+	private String host;
 
 	@Override
 	public String getBaseUrl() {
-		return profileHost;// must have url
+		return host;// must have url
 	}
 
 	@Resource 
@@ -35,7 +35,7 @@ public class ExampleServiceSubscriber<T> extends AbstractServiceSubscriber imple
 	}
 
 	// Just an example
-	public interface AccountService {
+	public interface AccountService {//Urls will be http://localhost/api/account/get_by_id 
 		Object getById(long userId); // it will be GET account/get_by_id?userId=xxxx
 		boolean login(String username, String password); // it will be: url POST account/login {username:xxx, password: xxx} 
 	}
