@@ -83,7 +83,7 @@
 				<directory>src/test/resources</directory>
 			</resource>
 		</resources>
-		
+
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -92,9 +92,9 @@
 				<configuration>
 					<source>${java.version}</source>
 					<target>${java.version}</target>
-	                <compilerArgs>
-	                    <arg>-parameters</arg>
-	                </compilerArgs>
+					<compilerArgs>
+						<arg>-parameters</arg>
+					</compilerArgs>
 				</configuration>
 			</plugin>
 		</plugins>

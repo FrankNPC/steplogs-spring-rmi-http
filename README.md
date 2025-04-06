@@ -1,4 +1,4 @@
-## It gets a quick start for RPC in spring web ##
+## Quick start RPC in spring web ##
 
  - make sure turn on -parameters to keep debug info for parameter names of methods in your the declaration package. It's to keep the parameters of html post/get parameters against methods.
 
@@ -9,12 +9,13 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.13.0</version>
 				<configuration>
-	                <compilerArgs>
-	                    <arg>-parameters</arg>
-	                </compilerArgs>
+					<compilerArgs>
+						<arg>-parameters</arg>
+					</compilerArgs>
 				</configuration>
 			</plugin>
 		</plugins>
+		
 ```
 
  - The class name and method will be translate to path string:
