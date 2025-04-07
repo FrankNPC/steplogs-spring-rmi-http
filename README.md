@@ -1,6 +1,6 @@
 ## Quick start RPC in spring web ##
 
- - make sure turn on -parameters to keep debug info for parameter names of methods in your the declaration package. It's to keep the parameters of html post/get parameters against methods.
+ - If the interfaces or classes from another repo, make sure turn on -parameters on that repo to keep parameter's name of methods. Then it can proxy the parameters of html post/get parameters against methods.
 
 ```xml
 		<plugins>
