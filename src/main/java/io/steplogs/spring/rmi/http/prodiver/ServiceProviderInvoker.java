@@ -5,10 +5,14 @@ import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -20,7 +24,8 @@ import jakarta.servlet.http.HttpServletResponse;
 public class ServiceProviderInvoker {
 
 	private static final ObjectMapper objectMapper = new ObjectMapper();
-	private static final String DEFAULT_ERROR_RESPONSE = "{\"code\": -1, \"message\": \"service doesn't exist\", \"success\": false}";
+	private static final String BAD_REQUEST = "{\"code\": -1, \"message\": \"bad request: {}\", \"success\": false}";
+	private static final String NOT_FOUND   = "{\"code\": -1, \"message\": \"not found: {}\", \"success\": false}";
 	public static final String INTERNAL_SERVICE_ERROR = "{\"code\": -1, \"message\": \"Internal Servie Error\", \"success\": false}";
 
 	private static final ErrorHandler DEFAULT_ERROR_HANDLER = new ErrorHandler() {
@@ -50,37 +55,57 @@ public class ServiceProviderInvoker {
 		return errorHandler;
 	}
 	
-	public Object get(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ResponseEntity<String> get(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		URI url = URI.create(request.getRequestURL().toString());
 		String path = url.getPath();
 		if (path==null || !path.matches("^/[a-zA-Z0-9_\\-]+/[a-zA-Z0-9_\\-]+.*$")) {
-			return DEFAULT_ERROR_RESPONSE;
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.headers(getHttpHeaders()).body(BAD_REQUEST.replace("{}", path));
 		}
 		InvokeTarget invokeTarget = serviceProviderConfiguration.getServiceInvokeTarget(path);
 		if (invokeTarget==null) {
-			return DEFAULT_ERROR_RESPONSE;
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.headers(getHttpHeaders()).body(NOT_FOUND.replace("{}", path));
 		}
 		
 		Map<String, String[]> requestMapper = request.getParameterMap();
 		Object[] requestParams = parseParameters(requestMapper, invokeTarget, null);
-		return invokeTarget.getMethod().invoke(invokeTarget.getBean(), requestParams);
+		Object ret = invokeTarget.getMethod().invoke(invokeTarget.getBean(), requestParams);
+		return ResponseEntity.status(HttpStatus.OK).headers(getHttpHeaders()).body(objectMapper.writeValueAsString(ret));
 	}
 	
-	public Object post(HttpServletRequest request, HttpServletResponse response,
+	public ResponseEntity<String> post(HttpServletRequest request, HttpServletResponse response,
 								Map<String, Object> formBody) throws Exception {
 		URI url = URI.create(request.getRequestURL().toString());
 		String path = url.getPath();
 		if (path==null || !path.matches("^/[a-zA-Z0-9_\\-]+/[a-zA-Z0-9_\\-]+.*$")) {
-			return DEFAULT_ERROR_RESPONSE;
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.headers(getHttpHeaders()).body(BAD_REQUEST.replace("{}", path));
 		}
 		InvokeTarget invokeTarget = serviceProviderConfiguration.getServiceInvokeTarget(path);
 		if (invokeTarget==null) {
-			return DEFAULT_ERROR_RESPONSE;
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.headers(getHttpHeaders()).body(NOT_FOUND.replace("{}", path));
 		}
 
 		Map<String, String[]> requestMapper = request.getParameterMap();
 		Object[] requestParams = parseParameters(requestMapper, invokeTarget, formBody);
-		return invokeTarget.getMethod().invoke(invokeTarget.getBean(), requestParams);
+		Object ret = invokeTarget.getMethod().invoke(invokeTarget.getBean(), requestParams);
+		return ResponseEntity.status(HttpStatus.OK).headers(getHttpHeaders()).body(objectMapper.writeValueAsString(ret));
+	}
+
+	HttpHeaders getHttpHeaders() {
+	    HttpHeaders headers = new HttpHeaders();
+		HttpHeaderTransporter httpHeaderTransporter = getHttpHeaderTransporter();
+		if (httpHeaderTransporter!=null) {
+			Map<String, List<String>> headerValues = httpHeaderTransporter.getHttpHeaders();
+			if (headerValues!=null) {
+				for(Map.Entry<String, List<String>> entry : headerValues.entrySet()) {
+					headers.addAll(entry.getKey(), entry.getValue());
+				}
+			}
+		}
+		return headers;
 	}
 	
 	static Object[] parseParameters(Map<String, String[]> requestMapper, InvokeTarget invokeTarget, Map<String, Object> formBody) throws Exception {

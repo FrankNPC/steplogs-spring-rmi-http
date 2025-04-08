@@ -120,9 +120,9 @@ public abstract class AbstractInvokerClient<T> {
 //			responseHeaderTransporter.setHttpHeaders(response.getHeaders());
 //		}
 		if (response.getStatusCode().isError()) {
-			if (serviceClientTemplate.getErrorHandler()!=null) {
+//			if (serviceClientTemplate.getErrorHandler()!=null) {
 //				serviceClientTemplate.getErrorHandler().handle(request, response);
-			}
+//			}
 			return serviceClientTemplate.getDefaultErrorResponse();
 		} else {
 			try {

@@ -1,11 +1,9 @@
 package io.steplogs.spring.rmi.http.prodiver;
 
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +17,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 
-import io.steplogs.spring.rmi.http.HttpHeaderTransporter;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -44,13 +41,12 @@ public class ServiceProviderController {
 	@GetMapping(value="/*/**", produces= {MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<String> get(HttpServletRequest request, HttpServletResponse response) {
 		try {
-			Object ret = serviceProviderInvoker.get(request, response);
-			return ResponseEntity.status(HttpStatus.OK).headers(getHttpHeaders()).body(objectMapper.writeValueAsString(ret));
+			return serviceProviderInvoker.get(request, response);
 		} catch (Exception e) {
 			try {
-				return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).headers(getHttpHeaders()).body(objectMapper.writeValueAsString(serviceProviderInvoker.getErrorHandler().handle(e)));
+				return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).headers(serviceProviderInvoker.getHttpHeaders()).body(objectMapper.writeValueAsString(serviceProviderInvoker.getErrorHandler().handle(e)));
 			} catch (JsonProcessingException e1) {
-				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).headers(getHttpHeaders()).body(ServiceProviderInvoker.INTERNAL_SERVICE_ERROR);
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).headers(serviceProviderInvoker.getHttpHeaders()).body(ServiceProviderInvoker.INTERNAL_SERVICE_ERROR);
 			}
 		}
 	}
@@ -59,28 +55,14 @@ public class ServiceProviderController {
 	public ResponseEntity<String> post(HttpServletRequest request, HttpServletResponse response,
 						@RequestBody Map<String, Object> formBody) {
 		try {
-			Object ret = serviceProviderInvoker.post(request, response, formBody);
-			return ResponseEntity.status(HttpStatus.OK).headers(getHttpHeaders()).body(objectMapper.writeValueAsString(ret));
+			return serviceProviderInvoker.post(request, response, formBody);
 		} catch (Exception e) {
 			try {
-				return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).headers(getHttpHeaders()).body(objectMapper.writeValueAsString(serviceProviderInvoker.getErrorHandler().handle(e)));
+				return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).headers(serviceProviderInvoker.getHttpHeaders()).body(objectMapper.writeValueAsString(serviceProviderInvoker.getErrorHandler().handle(e)));
 			} catch (JsonProcessingException e1) {
-				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).headers(getHttpHeaders()).body(ServiceProviderInvoker.INTERNAL_SERVICE_ERROR);
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).headers(serviceProviderInvoker.getHttpHeaders()).body(ServiceProviderInvoker.INTERNAL_SERVICE_ERROR);
 			}
 		}
 	}
 
-	private HttpHeaders getHttpHeaders() {
-	    HttpHeaders headers = new HttpHeaders();
-		HttpHeaderTransporter httpHeaderTransporter = serviceProviderInvoker.getHttpHeaderTransporter();
-		if (httpHeaderTransporter!=null) {
-			Map<String, List<String>> headerValues = httpHeaderTransporter.getHttpHeaders();
-			if (headerValues!=null) {
-				for(Map.Entry<String, List<String>> entry : headerValues.entrySet()) {
-					headers.addAll(entry.getKey(), entry.getValue());
-				}
-			}
-		}
-		return headers;
-	}
 }
