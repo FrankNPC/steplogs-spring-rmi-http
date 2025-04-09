@@ -1,6 +1,6 @@
 ## Quick start RPC in spring web ##
 
- - If the interfaces or classes from another repo, make sure turn on -parameters on that repo to keep parameter's name of methods. Then it can proxy the parameters of html post/get parameters against methods.
+ - If proxy the interfaces from another repo, make sure turn on -parameters on that repo to keep parameter's name of methods. so the parameters of html post/get can against methods on interfaces. 
 
 ```xml
 		<plugins>
