@@ -5,7 +5,7 @@ import org.springframework.web.client.RestClient;
 
 public interface ServiceClientTemplate<T> {
 	
-	default String getBaseUrl() {return null;}
+	String getBaseUrl();
 	
 	/**
 	 * Return a RestClient for Invoker to call.

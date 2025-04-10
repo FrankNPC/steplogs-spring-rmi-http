@@ -1,6 +1,6 @@
 ## Quick start RPC in spring web ##
 
- - If proxy the interfaces from another repo, make sure turn on -parameters on that repo to keep parameter's name of methods. so the parameters of html post/get can against methods on interfaces. 
+ - If proxy the interfaces from another repo, make sure turn on -parameters on that repo to keep parameter's name of methods. so the parameters of post/get can against methods on interfaces. 
 
 ```xml
 		<plugins>
@@ -17,16 +17,16 @@
 		</plugins>
 ```
 
- - The class name and method will be translate to path string:
+ - The class name and method will be translated to path string:
 
-> AccountServiceImpl.login -> account/login
-> so, do not use the duplicated method name in the service.
+> AccountServiceImpl.login -> account/login.
+> method name in the service should be different.
 
  - The parameters right on the method in types of primitives will be on the URL as query string.
  
-> so keeping the parameter names are different would be important.
+> keeping the parameter names by [-parameters].
 
- - Configure serializer and deserializer in order to prevent vulnerability.
+ - Configure serializer and deserializer if needed or leave if to default.
  
 > See [RestClient.builder().messageConverters(HttpMessageConverter)](https://github.com/FrankNPC/steplogs-spring-rmi-http/blob/main/src/main/java/io/steplogs/spring/rmi/http/subscriber/AbstractInvokerClient.java#L103)
 

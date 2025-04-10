@@ -18,9 +18,9 @@ public class ExampleServiceProvider {
 	@Service
 	class AccountServiceImpl implements ExampleServiceSubscriber.AccountService {
 		@Override
-		public Object getById(long userId) { return null; } // it will be GET account/get_by_id?userId=xxxx
+		public Object getById(long userId) { return null; } // it will be: HTTP GET account/get_by_id?userId=xxxx
 		@Override
-		public boolean login(String username, String password) { return true; } // it will be: url POST account/login {username:xxx, password: xxx} 
+		public boolean login(String username, String password) { return true; } // it will be: HTTP POST account/login {username:xxx, password: xxx} 
 	}
 	
 }

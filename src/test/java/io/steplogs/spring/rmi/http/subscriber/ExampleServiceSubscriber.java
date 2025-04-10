@@ -25,7 +25,7 @@ public class ExampleServiceSubscriber<T> extends AbstractServiceSubscriber imple
 		return host;// must have url
 	}
 
-	// I use a http connection pool for RestClient
+	// use a http connection pool for RestClient for example
 	private CloseableHttpClient httpClient() {
 		PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
 		connectionManager.setMaxTotal(1024);
@@ -50,17 +50,17 @@ public class ExampleServiceSubscriber<T> extends AbstractServiceSubscriber imple
 		return RestClient
 			.builder(new RestTemplate(new HttpComponentsClientHttpRequestFactory(httpClient())))
 			.baseUrl(getBaseUrl())
-//            .messageConverters(HttpMessageConverter) // customize pay load convertors instead of default
+//            .messageConverters(HttpMessageConverter) // customize pay load convertors instead of default if needed
 			.build();
 	}
 
 	// Just an example
 	public interface AccountService {//Urls will be http://localhost/api/account/get_by_id 
-		Object getById(long userId); // it will be GET account/get_by_id?userId=xxxx
-		boolean login(String username, String password); // it will be: url POST account/login {username:xxx, password: xxx} 
+		Object getById(long userId); // it will be: HTTP GET account/get_by_id?userId=xxxx
+		boolean login(String username, String password); // it will be: HTTP POST account/login {username:xxx, password: xxx} 
 	}
 	
-	@Bean // declare the bean with proxy
+	@Bean // declare the bean with proxy so it can be used through @Resource @Autowire etc..
 	AccountService getAccountService() {
 		return this.getProxyFactoryBean(AccountService.class, this);
 	}
