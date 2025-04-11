@@ -1,7 +1,7 @@
 # This workflow will build a package using Maven and then publish it to GitHub packages when a release is created
 # For more information see: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#apache-maven-with-a-settings-path
 
-name: Maven - Publish steplogs-spring-rmi-http to GitHub Packages Apache Maven
+name: Maven - Publish to GitHub Packages for Apache Maven project
 
 on:
   push:
@@ -46,7 +46,7 @@ jobs:
     - name: Build with Maven
       run: mvn --batch-mode --update-snapshots clean package versions:set -DnewVersion=${{ env.TAG_NAME }}
       
-    - name: Publish steplogs-spring-rmi-http to GitHub Packages Apache Maven
+    - name: Publish to GitHub Packages
       run: mvn --batch-mode clean deploy versions:set -DnewVersion=${{ env.TAG_NAME }} -s ./settings.xml
       env:
         GITHUB_TOKEN: ${{ secrets.RELEASE_PUBLISH_GITHUB_TOKEN }}
