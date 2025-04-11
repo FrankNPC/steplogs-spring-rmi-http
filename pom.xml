@@ -6,7 +6,7 @@
 	
 	<groupId>io.steplogs</groupId>
 	<artifactId>steplogs-spring-rmi-http</artifactId>
-	<version>${revision}</version>
+	<version>1.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>steplogs-spring-rmi-http</name>
@@ -17,7 +17,6 @@
 	<url>https://steplogs.io</url>
 	
 	<properties>
-		<revision>1.0-SNAPSHOT</revision>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<encoding>UTF-8</encoding>
@@ -110,6 +109,23 @@
 					</compilerArgs>
 				</configuration>
 			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>versions-maven-plugin</artifactId>
+				<version>2.7</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>set</goal>
+						</goals>
+						<configuration>
+							<newVersion>${project.version}</newVersion>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+        
 		</plugins>
 		
 	</build>
