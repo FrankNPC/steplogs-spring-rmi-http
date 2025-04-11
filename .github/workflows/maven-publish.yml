@@ -35,4 +35,4 @@ jobs:
     - name: Publish steplogs-spring-rmi-http to GitHub Packages Apache Maven
       run: mvn deploy -DskipTests=true
       env:
-        GITHUB_TOKEN: ${{ secrets.JAR_PUBLISH_GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
