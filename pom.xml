@@ -69,15 +69,6 @@
 		</dependency>
 	</dependencies>
 
-	<distributionManagement>
-		<repository>
-			<uniqueVersion>false</uniqueVersion>
-			<id>github</id>
-			<name>steplogs-spring-rmi-http</name>
-			<url>https://maven.pkg.github.com/FrankNPC/steplogs-spring-rmi-http</url>
-		</repository>
-	</distributionManagement>
-
 	<build>
 		<defaultGoal>clean package</defaultGoal>
 
@@ -130,4 +121,24 @@
 		
 	</build>
 
+	<distributionManagement>
+		<repository>
+			<uniqueVersion>false</uniqueVersion>
+			<id>github</id>
+			<name>steplogs-spring-rmi-http</name>
+			<url>https://maven.pkg.github.com/FrankNPC/steplogs-spring-rmi-http</url>
+		</repository>
+	</distributionManagement>
+	
+	<repositories>
+	    <repository>
+	        <id>github</id>
+			<url>https://maven.pkg.github.com/FrankNPC/steplogs-spring-rmi-http</url>
+	    </repository>
+	    <repository>
+	        <id>central</id>
+	        <url>https://repo.maven.apache.org/maven2</url>
+	    </repository>
+	</repositories>
+	
 </project>
