@@ -125,7 +125,6 @@
 		<repository>
 			<uniqueVersion>false</uniqueVersion>
 			<id>github</id>
-			<name>steplogs-spring-rmi-http</name>
 			<url>https://maven.pkg.github.com/FrankNPC/${project.artifactId}</url>
 		</repository>
 	</distributionManagement>
