@@ -69,10 +69,9 @@
 	<distributionManagement>
 		<repository>
 			<uniqueVersion>false</uniqueVersion>
-			<id>repository</id>
+			<id>github</id>
 			<name>steplogs-spring-rmi-http</name>
 			<url>https://maven.pkg.github.com/FrankNPC/steplogs-spring-rmi-http</url>
-			<layout>default</layout>
 		</repository>
 	</distributionManagement>
 
@@ -123,4 +122,5 @@
 		</plugins>
 		
 	</build>
+
 </project>
