@@ -47,7 +47,7 @@ jobs:
       run: mvn --batch-mode --update-snapshots clean package
       
     - name: Publish steplogs-spring-rmi-http to GitHub Packages Apache Maven
-      run: mvn --batch-mode clean deploy -Drevision=${{ env.TAG_NAME }} -s ./settings.xml
+      run: mvn --batch-mode clean deploy versions:set -DnewVersion=${{ env.TAG_NAME }} -s ./settings.xml
       env:
         GITHUB_TOKEN: ${{ secrets.RELEASE_PUBLISH_GITHUB_TOKEN }}
         TAG_NAME: ${{ env.TAG_NAME }}
