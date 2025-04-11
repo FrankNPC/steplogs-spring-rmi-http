@@ -126,14 +126,14 @@
 			<uniqueVersion>false</uniqueVersion>
 			<id>github</id>
 			<name>steplogs-spring-rmi-http</name>
-			<url>https://maven.pkg.github.com/FrankNPC/{artifactId}</url>
+			<url>https://maven.pkg.github.com/FrankNPC/${project.artifactId}</url>
 		</repository>
 	</distributionManagement>
 	
 	<repositories>
 	    <repository>
 	        <id>github</id>
-			<url>https://maven.pkg.github.com/FrankNPC/{artifactId}</url>
+			<url>https://maven.pkg.github.com/FrankNPC/${project.artifactId}</url>
 	    </repository>
 	    <repository>
 	        <id>central</id>
