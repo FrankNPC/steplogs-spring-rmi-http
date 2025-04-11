@@ -44,7 +44,7 @@ jobs:
           ${{ runner.os }}-maven-
 
     - name: Build with Maven
-      run: mvn --batch-mode --update-snapshots clean package
+      run: mvn --batch-mode --update-snapshots clean package versions:set -DnewVersion=${{ env.TAG_NAME }}
       
     - name: Publish steplogs-spring-rmi-http to GitHub Packages Apache Maven
       run: mvn --batch-mode clean deploy versions:set -DnewVersion=${{ env.TAG_NAME }} -s ./settings.xml
