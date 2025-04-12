@@ -6,9 +6,6 @@
 			<id>central</id>
 			<username>${env.SONATYPE_USERNAME}</username>
 			<password>${env.SONATYPE_PASSWORD}</password>
-			<configuration>
-				<gpgPassphrase>${env.GPG_PASSPHRASE}</gpgPassphrase>
-			</configuration>
 		</server>
 	</servers>
 
