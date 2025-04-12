@@ -102,17 +102,22 @@
 			</plugin>
 
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-gpg-plugin</artifactId>
-				<version>1.6</version>
+				<groupId>org.simplify4u.plugins</groupId>
+				<artifactId>sign-maven-plugin</artifactId>
+				<version>1.1.0</version>
 				<executions>
 					<execution>
 						<goals>
 							<goal>sign</goal>
 						</goals>
+						<configuration>
+							<keyFile>${env.SONATYPE_GPG_KEYNAME}</keyFile>
+							<keyPass>${env.SONATYPE_GPG_PASSPHRASE}</keyPass>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
+			
 			<plugin>
 				<groupId>org.sonatype.central</groupId>
 				<artifactId>central-publishing-maven-plugin</artifactId>

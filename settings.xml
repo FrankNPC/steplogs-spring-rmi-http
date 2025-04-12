@@ -9,14 +9,4 @@
 		</server>
 	</servers>
 
-	<profiles>
-		<profile>
-			<id>release</id>
-			<properties>
-				<gpg.keyname>${env.SONATYPE_GPG_KEYNAME}</gpg.keyname>
-				<gpg.passphrase>${env.SONATYPE_GPG_PASSPHRASE}</gpg.passphrase>
-			</properties>
-		</profile>
-	</profiles>
-	
 </settings>
