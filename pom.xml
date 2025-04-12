@@ -111,8 +111,8 @@
 							<goal>sign</goal>
 						</goals>
 						<configuration>
-							<keyFile>${SONATYPE_GPG_KEYNAME}</keyFile>
-							<keyPass>${SONATYPE_GPG_PASSPHRASE}</keyPass>
+							<keyFile>${sonatype.gpg.key}</keyFile>
+							<keyPass>${sonatype.gpg.passphrase}</keyPass>
 						</configuration>
 					</execution>
 				</executions>
