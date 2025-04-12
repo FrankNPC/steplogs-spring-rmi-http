@@ -12,9 +12,9 @@
 	<name>steplogs-spring-rmi-http</name>
 	<description>
 		Steplogs Spring HTTP RMI/RPC Framework. 
-		See https://github.com/FrankNPC/steplogs-spring-rmi-http
+		See https://github.com/FrankNPC/${project.artifactId}
 	</description>
-	<url>https://steplogs.io</url>
+	<url>https://www.steplogs.io</url>
 	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -102,9 +102,19 @@
 			</plugin>
 
 			<plugin>
+				<groupId>org.sonatype.central</groupId>
+				<artifactId>central-publishing-maven-plugin</artifactId>
+				<version>0.7.0</version>
+				<extensions>true</extensions>
+				<configuration>
+					<publishingServerId>central</publishingServerId>
+				</configuration>
+			</plugin>
+                
+			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>versions-maven-plugin</artifactId>
-				<version>2.7</version>
+				<version>2.18.0</version>
 				<executions>
 					<execution>
 						<goals>
@@ -116,28 +126,16 @@
 					</execution>
 				</executions>
 			</plugin>
-        
+
 		</plugins>
-		
 	</build>
 
 	<distributionManagement>
-		<repository>
+        <repository>
 			<uniqueVersion>false</uniqueVersion>
-			<id>github</id>
-			<url>https://maven.pkg.github.com/FrankNPC/${project.artifactId}</url>
-		</repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
 	</distributionManagement>
-	
-	<repositories>
-	    <repository>
-	        <id>github</id>
-			<url>https://maven.pkg.github.com/FrankNPC/${project.artifactId}</url>
-	    </repository>
-	    <repository>
-	        <id>central</id>
-	        <url>https://repo.maven.apache.org/maven2</url>
-	    </repository>
-	</repositories>
 	
 </project>
