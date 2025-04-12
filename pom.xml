@@ -110,10 +110,6 @@
 						<goals>
 							<goal>sign</goal>
 						</goals>
-						<configuration>
-							<keyFile>${sonatype.gpg.key}</keyFile>
-							<keyPass>${sonatype.gpg.passphrase}</keyPass>
-						</configuration>
 					</execution>
 				</executions>
 			</plugin>
