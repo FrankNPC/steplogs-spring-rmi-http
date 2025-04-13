@@ -6,7 +6,7 @@ name: Maven - Publish to GitHub Packages for Apache Maven project
 on:
   push:
     tags:
-      - '*'
+      - 'xxxx*'
   workflow_dispatch:  # This enables the manual trigger from the GitHub UI
 
 jobs:
