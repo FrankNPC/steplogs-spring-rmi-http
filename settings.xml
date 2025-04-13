@@ -5,8 +5,8 @@
 
 		<server>
 			<id>cloudsmith</id>
-			<username>{{cloudsmith.username}}</username>
-			<password>{{cloudsmith.password}}</password>
+			<username>${cloudsmith.username}</username>
+			<password>${cloudsmith.password}</password>
 		</server>
 		
 	</servers>
