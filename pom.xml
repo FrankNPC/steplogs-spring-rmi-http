@@ -12,7 +12,7 @@
 	<name>steplogs-spring-rmi-http</name>
 	<description>
 		Steplogs Spring HTTP RMI/RPC Framework. 
-		See https://github.com/FrankNPC/${project.artifactId}
+		See https://github.com/FrankNPC/steplogs-spring-rmi-http
 	</description>
 	<url>https://www.steplogs.io</url>
 	
@@ -190,9 +190,9 @@
 	</licenses>
 
 	<scm>
-		<url>https://github.com/FrankNPC/${project.artifactId}</url>
-		<connection>scm:git:https://github.com/FrankNPC/${project.artifactId}.git</connection>
-		<developerConnection>scm:git:ssh://github.com/FrankNPC/${project.artifactId}.git</developerConnection>
+		<url>https://github.com/FrankNPC/steplogs-spring-rmi-http</url>
+		<connection>scm:git:https://github.com/FrankNPC/steplogs-spring-rmi-http.git</connection>
+		<developerConnection>scm:git:ssh://github.com/FrankNPC/steplogs-spring-rmi-http.git</developerConnection>
 		<tag>HEAD</tag>
 	</scm>
 
