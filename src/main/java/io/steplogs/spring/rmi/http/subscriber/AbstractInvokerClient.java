@@ -13,6 +13,11 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClient.RequestHeadersSpec.ConvertibleClientHttpResponse;
 import org.springframework.web.util.UriBuilder;
 
+/**
+ * major class to exchange request payload to response object
+ * 
+ * @param <T> generic type
+ */
 public abstract class AbstractInvokerClient<T> {
 
 //	private static final ObjectMapper objectMapper = JsonMapper.builder()
@@ -25,16 +30,27 @@ public abstract class AbstractInvokerClient<T> {
 //        converters.add(jsonConverter);
 //    };
 	
+	/**
+	 * The template to get URL and advisor etc.
+	 */
 	protected final ServiceClientTemplate<T> serviceClientTemplate;
 	
+	/**
+	 * constructor 
+	 * 
+	 * @param serviceClientTemplate to get URL and restclient etc.
+	 */
 	public AbstractInvokerClient(ServiceClientTemplate<T> serviceClientTemplate) {
 		this.serviceClientTemplate = serviceClientTemplate;
 	}
 
 	/**
+	 * For GET, URL query parameters
+	 * 
 	 * @param path				path
 	 * @param queryVariables	Query variables on the URL
 	 * @param typeRef			Type convert to
+	 * @return T 				The object by typeRef
 	 */
 	protected T get(String path, Map<String, Object> queryVariables, ParameterizedTypeReference<T> typeRef) {
 		RestClient restClient = getRestClient(serviceClientTemplate);
@@ -48,11 +64,13 @@ public abstract class AbstractInvokerClient<T> {
 	}
 
 	/**
-	 * No URL query parameters
+	 * For POST, No URL query parameters
+	 * 
 	 * @param path				path
 	 * @param queryVariables	Query variables on the URL
 	 * @param formData			Form data
 	 * @param typeRef			Type convert to
+	 * @return T 				The object by typeRef
 	 */
 	protected T post(String path, Map<String, Object> queryVariables, Map<String, Object> formData, ParameterizedTypeReference<T> typeRef) {
 		RestClient restClient = getRestClient(serviceClientTemplate);
