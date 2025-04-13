@@ -148,10 +148,14 @@
 	</build>
 
 	<distributionManagement>
-		  <repository>
-		    <id>cloudsmith</id>
-		    <url>https://maven.cloudsmith.io/steplogs/public/</url>
-		  </repository>
+		<snapshotRepository>
+			<id>cloudsmith</id>
+			<url>https://maven.cloudsmith.io/steplogs/public/</url>
+		</snapshotRepository>
+		<repository>
+			<id>cloudsmith</id>
+			<url>https://maven.cloudsmith.io/steplogs/public/</url>
+		</repository>
 	</distributionManagement>
 
 	<developers>

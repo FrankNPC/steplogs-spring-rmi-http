@@ -5,7 +5,7 @@
 
 		<server>
 			<id>cloudsmith</id>
-			<username>${cloudsmith.username}</username>
+      		<username>technology-department</username>
 			<password>${cloudsmith.password}</password>
 		</server>
 		
