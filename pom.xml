@@ -102,29 +102,33 @@
 			</plugin>
 
 			<plugin>
-				<groupId>org.simplify4u.plugins</groupId>
-				<artifactId>sign-maven-plugin</artifactId>
-				<version>1.1.0</version>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>3.2.1</version>
 				<executions>
 					<execution>
+						<id>attach-sources</id>
 						<goals>
-							<goal>sign</goal>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.3.1</version>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
 						</goals>
 					</execution>
 				</executions>
 			</plugin>
 			
-			<plugin>
-				<groupId>org.sonatype.central</groupId>
-				<artifactId>central-publishing-maven-plugin</artifactId>
-				<version>0.7.0</version>
-				<extensions>true</extensions>
-				<configuration>
-					<publishingServerId>central</publishingServerId>
-					<autoPublish>true</autoPublish>
-				</configuration>
-			</plugin>
-                
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>versions-maven-plugin</artifactId>
@@ -141,7 +145,50 @@
 				</executions>
 			</plugin>
 
+			<plugin>
+				<groupId>org.simplify4u.plugins</groupId>
+				<artifactId>sign-maven-plugin</artifactId>
+				<version>1.1.0</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
 		</plugins>
 	</build>
+
+	<distributionManagement>
+		  <repository>
+		    <id>cloudsmith</id>
+		    <url>https://maven.cloudsmith.io/steplogs/public/</url>
+		  </repository>
+	</distributionManagement>
+
+	<developers>
+		<developer>
+			<id>FrankNPC</id>
+			<name>FrankNPC</name>
+			<email>technology@steplogs.io</email>
+		</developer>
+	</developers>
+
+	<licenses>
+		<license>
+			<name>The Apache License, Version 2.0</name>
+			<url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<scm>
+		<url>https://github.com/FrankNPC/${project.artifactId}</url>
+		<connection>scm:git:https://github.com/FrankNPC/${project.artifactId}.git</connection>
+		<developerConnection>scm:git:ssh://github.com/FrankNPC/${project.artifactId}.git</developerConnection>
+		<tag>HEAD</tag>
+	</scm>
 
 </project>
