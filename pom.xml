@@ -158,6 +158,21 @@
 		</repository>
 	</distributionManagement>
 
+	<repositories>
+		<repository>
+			<id>steplogs-public</id>
+			<url>https://dl.cloudsmith.io/public/steplogs/public/maven/</url>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+			</snapshots>
+		</repository>
+	</repositories>
+
 	<developers>
 		<developer>
 			<id>FrankNPC</id>
