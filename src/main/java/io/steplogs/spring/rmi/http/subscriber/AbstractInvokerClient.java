@@ -43,6 +43,8 @@ public abstract class AbstractInvokerClient<T> {
 	public AbstractInvokerClient(ServiceClientTemplate<T> serviceClientTemplate) {
 		this.serviceClientTemplate = serviceClientTemplate;
 	}
+	
+	private RestClient restClient;
 
 	/**
 	 * For GET, URL query parameters
@@ -53,7 +55,9 @@ public abstract class AbstractInvokerClient<T> {
 	 * @return T 				The object by typeRef
 	 */
 	protected T get(String path, Map<String, Object> queryVariables, ParameterizedTypeReference<T> typeRef) {
-		RestClient restClient = getRestClient(serviceClientTemplate);
+		if (restClient==null) {
+			restClient = getRestClient(serviceClientTemplate);
+		}
 
 		return restClient
 				.get()
@@ -73,7 +77,9 @@ public abstract class AbstractInvokerClient<T> {
 	 * @return T 				The object by typeRef
 	 */
 	protected T post(String path, Map<String, Object> queryVariables, Map<String, Object> formData, ParameterizedTypeReference<T> typeRef) {
-		RestClient restClient = getRestClient(serviceClientTemplate);
+		if (restClient==null) {
+			restClient = getRestClient(serviceClientTemplate);
+		}
 		
 		return restClient
 				.post()
