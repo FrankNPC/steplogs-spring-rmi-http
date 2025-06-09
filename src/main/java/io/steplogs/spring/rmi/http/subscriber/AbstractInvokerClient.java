@@ -35,7 +35,7 @@ public abstract class AbstractInvokerClient<T> {
 	 */
 	protected final ServiceClientTemplate<T> serviceClientTemplate;
 	
-	private final RestClient restClient;
+	protected final RestClient restClient;
 	
 	/**
 	 * constructor 
