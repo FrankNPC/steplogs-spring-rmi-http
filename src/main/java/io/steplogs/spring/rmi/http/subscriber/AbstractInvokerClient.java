@@ -56,12 +56,17 @@ public abstract class AbstractInvokerClient<T> {
 	 * @return T 				The object by typeRef
 	 */
 	protected T get(String path, Map<String, Object> queryVariables, ParameterizedTypeReference<T> typeRef) {
-		return restClient
-				.get()
-				.uri(builder ->  addUriBuilder(builder, path, queryVariables).build())
-//				.headers(headers -> addHeaders(serviceClientTemplate.getRequestHttpHeaderTransporter(), headers))
-				.accept(MediaType.APPLICATION_JSON)
-				.exchange((request, response) -> exchange(serviceClientTemplate, request, response, typeRef));
+		try {
+			return restClient
+					.get()
+					.uri(builder ->  addUriBuilder(builder, path, queryVariables).build())
+//					.headers(headers -> addHeaders(serviceClientTemplate.getRequestHttpHeaderTransporter(), headers))
+					.accept(MediaType.APPLICATION_JSON)
+					.exchange((request, response) -> exchange(serviceClientTemplate, request, response, typeRef));
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return serviceClientTemplate.getDefaultErrorResponse();
 	}
 
 	/**
@@ -74,14 +79,19 @@ public abstract class AbstractInvokerClient<T> {
 	 * @return T 				The object by typeRef
 	 */
 	protected T post(String path, Map<String, Object> queryVariables, Map<String, Object> formData, ParameterizedTypeReference<T> typeRef) {
-		return restClient
-				.post()
-				.uri(builder ->  addUriBuilder(builder, path, queryVariables).build())
-//				.headers(headers -> addHeaders(serviceClientTemplate.getRequestHttpHeaderTransporter(), headers))
-				.accept(MediaType.APPLICATION_JSON)
-				.contentType(MediaType.APPLICATION_JSON)
-				.body(formData)
-				.exchange((request, response) -> exchange(serviceClientTemplate, request, response, typeRef));
+		try {
+			return restClient
+					.post()
+					.uri(builder ->  addUriBuilder(builder, path, queryVariables).build())
+//					.headers(headers -> addHeaders(serviceClientTemplate.getRequestHttpHeaderTransporter(), headers))
+					.accept(MediaType.APPLICATION_JSON)
+					.contentType(MediaType.APPLICATION_JSON)
+					.body(formData)
+					.exchange((request, response) -> exchange(serviceClientTemplate, request, response, typeRef));
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return serviceClientTemplate.getDefaultErrorResponse();
 	}
 
 	
@@ -123,6 +133,7 @@ public abstract class AbstractInvokerClient<T> {
 		}else {
 			return RestClient
 				.builder().requestFactory(new HttpComponentsClientHttpRequestFactory())
+				.defaultStatusHandler(null)
 				.baseUrl(serviceClientTemplate.getBaseUrl())
 //	            .messageConverters(HttpMessageConverter)
 				.build();
