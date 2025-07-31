@@ -2,7 +2,6 @@ package io.steplogs.spring.rmi.http.prodiver;
 
 import java.lang.reflect.Parameter;
 import java.net.URI;
-import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
@@ -139,7 +138,7 @@ public class ServiceProviderInvoker {
 	private static Map<Class<?>, Converter> converters = initiateConverters();
 	static Map<Class<?>, Converter> initiateConverters(){
 		Map<Class<?>, Converter> theConverters = new HashMap<>();
-		theConverters.put(String.class, (strValue, toClass) -> strValue.isEmpty() ? "" : URLDecoder.decode(String.valueOf(strValue), defaultCharSet));
+		theConverters.put(String.class, (strValue, toClass) -> strValue.isEmpty() ? "" : String.valueOf(strValue));
 		theConverters.put(Void.class, (strValue, toClass) -> null);
 		theConverters.put(void.class, (strValue, toClass) -> null);
 		theConverters.put(Boolean.class, (strValue, toClass) -> strValue.isEmpty() ? false : Boolean.parseBoolean(strValue));
