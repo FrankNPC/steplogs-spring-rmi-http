@@ -36,7 +36,7 @@ public class ServiceProviderInvoker {
 
 	@Resource
 	@Lazy
-	ServiceProviderConfiguration serviceProviderConfiguration;
+	AutoConfigurationServiceProvider serviceProviderConfiguration;
 
     @Autowired(required = false)
     ErrorHandler errorHandler = DEFAULT_ERROR_HANDLER;

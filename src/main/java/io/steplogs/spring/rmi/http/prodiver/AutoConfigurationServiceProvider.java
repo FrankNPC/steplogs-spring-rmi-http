@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.util.ClassUtils;
@@ -16,7 +17,8 @@ import io.steplogs.spring.rmi.http.BeanHelper;
 
 @Configuration
 @Import({ServiceProviderController.class})
-public class ServiceProviderConfiguration implements BeanPostProcessor {
+@ConditionalOnClass(AutoConfigurationServiceProvider.class)
+public class AutoConfigurationServiceProvider implements BeanPostProcessor {
 
 	private Map<String, InvokeTarget> beans = new HashMap<>();
 	

@@ -9,7 +9,7 @@ import io.steplogs.spring.rmi.http.subscriber.ExampleServiceSubscriber;
 
 @Configuration
 @Import({
-	ServiceProviderConfiguration.class,//import it so it scans all of beans noted with @Provider, and process the incoming traffic
+	AutoConfigurationServiceProvider.class,//import it so it scans all of beans noted with @Provider, and process the incoming traffic
 })
 public class ExampleServiceProvider {
 
