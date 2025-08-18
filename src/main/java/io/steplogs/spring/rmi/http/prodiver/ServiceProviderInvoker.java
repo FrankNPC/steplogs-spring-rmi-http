@@ -23,17 +23,17 @@ import jakarta.servlet.http.HttpServletResponse;
 public class ServiceProviderInvoker {
 
 	private static final ObjectMapper objectMapper = new ObjectMapper();
-	private static final String BAD_REQUEST = "{\"code\": -1, \"message\": \"bad request: {}\", \"success\": false}";
-	private static final String NOT_FOUND   = "{\"code\": -1, \"message\": \"not found: {}\", \"success\": false}";
-	public static final String INTERNAL_SERVICE_ERROR = "{\"code\": -1, \"message\": \"Internal Servie Error\", \"success\": false}";
+	private static final String BAD_REQUEST = "{\"code\": -1, \"message\": \"bad request: {}\", \"success\": false, \"resolve\": \"\"}";
+	private static final String NOT_FOUND   = "{\"code\": -1, \"message\": \"not found: {}\", \"success\": false, \"resolve\": \"\"}";
+	public static final String INTERNAL_SERVICE_ERROR = "{\"code\": -1, \"message\": \"Internal Servie Error\", \"success\": false, \"resolve\": \"\"}";
 
 	private static final ErrorHandler DEFAULT_ERROR_HANDLER = new ErrorHandler() {
 		public String handle(Throwable thrownException) {
 			thrownException.printStackTrace();
-			return  INTERNAL_SERVICE_ERROR;
+			return  INTERNAL_SERVICE_ERROR.replace("\"resolve\": \"\"", "\"resolve\": \""+thrownException.getMessage()+"\"");
 		}
 	};
-
+	
 	@Resource
 	@Lazy
 	AutoConfigurationServiceProvider serviceProviderConfiguration;

@@ -65,8 +65,8 @@ public abstract class AbstractInvokerClient<T> {
 					.exchange((request, response) -> exchange(serviceClientTemplate, request, response, typeRef));
 		}catch(Exception e) {
 			e.printStackTrace();
+			return serviceClientTemplate.handleErrorResponse(null, e);
 		}
-		return serviceClientTemplate.getDefaultErrorResponse();
 	}
 
 	/**
@@ -90,8 +90,8 @@ public abstract class AbstractInvokerClient<T> {
 					.exchange((request, response) -> exchange(serviceClientTemplate, request, response, typeRef));
 		}catch(Exception e) {
 			e.printStackTrace();
+			return serviceClientTemplate.handleErrorResponse(null, e);
 		}
-		return serviceClientTemplate.getDefaultErrorResponse();
 	}
 
 	
@@ -151,12 +151,12 @@ public abstract class AbstractInvokerClient<T> {
 //			if (serviceClientTemplate.getErrorHandler()!=null) {
 //				serviceClientTemplate.getErrorHandler().handle(request, response);
 //			}
-			return serviceClientTemplate.getDefaultErrorResponse();
+			return serviceClientTemplate.handleErrorResponse(response.getStatusCode().value(), null);
 		} else {
 			try {
 				return response.bodyTo(typeRef);
 			}catch(Exception e) {
-				return serviceClientTemplate.getDefaultErrorResponse();
+				return serviceClientTemplate.handleErrorResponse(response.getStatusCode().value(), e);
 			}
 		}
 	}

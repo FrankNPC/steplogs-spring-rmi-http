@@ -18,7 +18,7 @@ public interface ServiceClientTemplate<T> {
 	
 //	default ErrorHandler getErrorHandler() {return null;}
 
-	default T getDefaultErrorResponse() {return null;}
+	default T handleErrorResponse(Integer httpCode, Exception exception) { return null;}
 	
 	/**
 	 * can apply a pointcut to run logistics
