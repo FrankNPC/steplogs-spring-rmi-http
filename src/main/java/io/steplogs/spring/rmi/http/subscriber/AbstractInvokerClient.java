@@ -64,7 +64,6 @@ public abstract class AbstractInvokerClient<T> {
 					.accept(MediaType.APPLICATION_JSON)
 					.exchange((request, response) -> exchange(serviceClientTemplate, request, response, typeRef));
 		}catch(Exception e) {
-			e.printStackTrace();
 			return serviceClientTemplate.handleErrorResponse(null, e);
 		}
 	}
@@ -89,7 +88,6 @@ public abstract class AbstractInvokerClient<T> {
 					.body(formData)
 					.exchange((request, response) -> exchange(serviceClientTemplate, request, response, typeRef));
 		}catch(Exception e) {
-			e.printStackTrace();
 			return serviceClientTemplate.handleErrorResponse(null, e);
 		}
 	}
@@ -105,7 +103,7 @@ public abstract class AbstractInvokerClient<T> {
 					val = URLEncoder.encode(val, "UTF-8");
 					builder.queryParam(entry.getKey(), val);
 				} catch (UnsupportedEncodingException e) {
-					e.printStackTrace();
+					throw new RuntimeException(e);
 				}
 			}else {
 				builder.queryParam(entry.getKey(), obj);
