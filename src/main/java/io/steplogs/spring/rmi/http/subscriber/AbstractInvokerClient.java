@@ -35,8 +35,6 @@ public abstract class AbstractInvokerClient<T> {
 	 */
 	protected final ServiceClientTemplate<T> serviceClientTemplate;
 	
-	protected final RestClient restClient;
-	
 	/**
 	 * constructor 
 	 * 
@@ -44,7 +42,6 @@ public abstract class AbstractInvokerClient<T> {
 	 */
 	public AbstractInvokerClient(ServiceClientTemplate<T> serviceClientTemplate) {
 		this.serviceClientTemplate = serviceClientTemplate;
-		this.restClient = getRestClient(serviceClientTemplate);
 	}
 
 	/**
@@ -57,7 +54,7 @@ public abstract class AbstractInvokerClient<T> {
 	 */
 	protected T get(String path, Map<String, Object> queryVariables, ParameterizedTypeReference<T> typeRef) {
 		try {
-			return restClient
+			return getRestClient(serviceClientTemplate)
 					.get()
 					.uri(builder ->  addUriBuilder(builder, path, queryVariables).build())
 //					.headers(headers -> addHeaders(serviceClientTemplate.getRequestHttpHeaderTransporter(), headers))
@@ -79,7 +76,7 @@ public abstract class AbstractInvokerClient<T> {
 	 */
 	protected T post(String path, Map<String, Object> queryVariables, Map<String, Object> formData, ParameterizedTypeReference<T> typeRef) {
 		try {
-			return restClient
+			return getRestClient(serviceClientTemplate)
 					.post()
 					.uri(builder ->  addUriBuilder(builder, path, queryVariables).build())
 //					.headers(headers -> addHeaders(serviceClientTemplate.getRequestHttpHeaderTransporter(), headers))
