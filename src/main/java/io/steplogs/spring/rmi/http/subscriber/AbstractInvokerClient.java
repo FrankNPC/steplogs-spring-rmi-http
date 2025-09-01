@@ -126,8 +126,9 @@ public abstract class AbstractInvokerClient<T> {
 //	}
 	
 	static RestClient getRestClient(ServiceClientTemplate<?> serviceClientTemplate) {
-		if (serviceClientTemplate.getRestClient()!=null) {
-			return serviceClientTemplate.getRestClient();
+		RestClient restClient = serviceClientTemplate.getRestClient();
+		if (restClient!=null) {
+			return restClient;
 		}else {
 			return RestClient
 				.builder().requestFactory(new HttpComponentsClientHttpRequestFactory())
